@@ -46,6 +46,13 @@ class RegistrationForm(QWidget):
         self.search=QPushButton('Search',self)
         self.log_out=QPushButton("Log Out",self)
 
+        #object for page gui
+        self.home=QPushButton("Home",self)
+        self.widget = QWidget()
+        self.scroll_area = QScrollArea()
+        self.main_layout = QVBoxLayout()
+
+        self.hide_page()
         self.hide_sign_in() #hide element page sign in
         self.hide_sign_up() #hide element page sign up
         self.hide_home() #hide element page home
@@ -76,6 +83,7 @@ class RegistrationForm(QWidget):
 
         self.hide_sign_up()
         self.hide_home()
+        self.hide_page()
         self.defult()
 
         #set background
@@ -284,6 +292,7 @@ class RegistrationForm(QWidget):
         self.error_sign_up.show() 
 #--------------------------------------------------------------------------------------------     
     def home_page(self):
+        self.hide_page()
         self.label.clear() #clear sign in background
 
         #set home background
@@ -291,30 +300,56 @@ class RegistrationForm(QWidget):
         self.label_home.resize(1000,800)
         
         # Add buttons products to the grid layout
-        list_name=["Mobile","Tablet","TV","Laptop","Headset","Favorites"]
-        for i in range(2):
-            for j in range(3):
-                button = QPushButton(list_name[i*2+j+1])
-                button.setFixedWidth(100)
-                button.setFixedHeight(100)
-                self.grid.addWidget(button, i, j)
+        self.grid = QGridLayout()
+        button00 = QPushButton("All")
+        button00.clicked.connect(lambda x:self.page())
+        button00.setFixedWidth(100)
+        button00.setFixedHeight(100)
+        self.grid.addWidget(button00, 0, 0)
+
+        button01 = QPushButton("Mobile")
+        button01.clicked.connect(lambda x:self.page())
+        button01.setFixedWidth(100)
+        button01.setFixedHeight(100)
+        self.grid.addWidget(button01, 0, 1)
+
+        button02 = QPushButton("Tablet")
+        button02.clicked.connect(lambda x:self.page())
+        button02.setFixedWidth(100)
+        button02.setFixedHeight(100)
+        self.grid.addWidget(button02, 0, 2)
+        button03 = QPushButton("TV")
+        button03.clicked.connect(lambda x:self.page())
+        button03.setFixedWidth(100)
+        button03.setFixedHeight(100)
+        self.grid.addWidget(button03, 0, 3)
+        button10 = QPushButton("Laptop")
+        button10.clicked.connect(lambda x:self.page())
+        button10.setFixedWidth(100)
+        button10.setFixedHeight(100)
+        self.grid.addWidget(button10, 1, 0)
+        button11 = QPushButton("Headset")
+        button11.clicked.connect(lambda x:self.page())
+        button11.setFixedWidth(100)
+        button11.setFixedHeight(100)
+        self.grid.addWidget(button11, 1, 1)
+        button12 = QPushButton("Favorites")
+        button12.clicked.connect(lambda x:self.page())
+        button12.setFixedWidth(100)
+        button12.setFixedHeight(100)
+        self.grid.addWidget(button12, 1, 2)
 
         self.setLayout(self.grid) #add grid to window
-
+        
         #creat log out button to go sign in page 
         self.log_out.setGeometry(25,25,75,25)
         self.log_out.clicked.connect(self.sign_in_gui)
 
-        #creat search box for searching amoung product
-        self.search_field.setGeometry(350,50,200,25)
-        self.search.setGeometry(575,50,75,25)
-
         self.show_home()
 
     def hide_home(self):
+
         self.log_out.hide()
-        self.search_field.hide()
-        self.search.hide()
         self.label_home.clear()
         for i in reversed(range(self.grid.count())):
             widget = self.grid.itemAt(i).widget()
@@ -322,10 +357,61 @@ class RegistrationForm(QWidget):
             widget.setParent(None)
             
     def show_home(self):
+        self.log_out.show()
+#--------------------------------------------------------------------------------------------     
+    def page(self):
+        self.hide_home()
+        self.show_page()
+        #set home background
+        self.label_home.setPixmap(self.pixmap_home)
+        self.label_home.resize(1000,800)
+
+        #creat search box for searching amoung product
+        self.search_field.setGeometry(350,50,200,25)
+        self.search.setGeometry(575,50,75,25)
+
+        #creat log out button to go sign in page 
+        self.home.setGeometry(900,25,75,25)
+        self.home.clicked.connect(self.home_page)
+
+        
+       
+        
+        # Add some labels to the grid layout
+        for i in range(2):
+            for j in range(3):
+                button = QPushButton(str(i*2+j+1))
+                button.setFixedWidth(100)
+                button.setFixedHeight(100)
+                self.grid.addWidget(button, i, j)
+                
+        # Create a new scroll area and set the widget as its content
+        self.widget.setLayout(self.grid)
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setWidget(self.widget)
+
+        # Add the scroll area to the main window
+        self.main_layout.setContentsMargins(10, 185, 10, 10)
+        self.main_layout.addWidget(self.scroll_area)
+        self.setLayout(self.main_layout)
+
+
+    def hide_page(self):
+        self.search_field.hide()
+        self.search.hide()
+        self.log_out.hide()
+        self.home.hide()
+        self.scroll_area.setParent(None)
+        
+   
+
+    def show_page(self):
+        self.log_out.show()
+        self.home.show()
         self.search_field.show()
         self.search.show()
-        self.log_out.show()
-      
+#-------------------------------------------------------------------------------   
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     registration_form = RegistrationForm()
