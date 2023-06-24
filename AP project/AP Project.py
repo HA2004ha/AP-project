@@ -1,6 +1,7 @@
 import sys
 import json
 import time
+import math
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -41,12 +42,20 @@ class RegistrationForm(QWidget):
         self.error_sign_up=QLabel("",self) 
 
         #object for home gui
-        self.grid = QGridLayout()
         self.search_field=QLineEdit(self)
         self.search=QPushButton('Search',self)
         self.log_out=QPushButton("Log Out",self)
+        self.button00 = QPushButton("All Products",self)
+        self.button01 = QPushButton("Mobile",self)
+        self.button02 = QPushButton("Tablet",self)
+        self.button03 = QPushButton("TV",self)
+        self.button10 = QPushButton("Laptop",self)
+        self.button11 = QPushButton("Headset",self)
+        self.button12 = QPushButton("Favorites",self)
 
         #object for page gui
+        self.name_products = QLabel('', self)
+        self.grid = QGridLayout()
         self.home=QPushButton("Home",self)
         self.widget = QWidget()
         self.scroll_area = QScrollArea()
@@ -290,7 +299,8 @@ class RegistrationForm(QWidget):
         self.sign_in_button2.show()
         self.sign_up_button2.show()
         self.error_sign_up.show() 
-#--------------------------------------------------------------------------------------------     
+#-------------------------------------------------------------------------------------------- 
+    
     def home_page(self):
         self.hide_page()
         self.label.clear() #clear sign in background
@@ -299,48 +309,29 @@ class RegistrationForm(QWidget):
         self.label_home.setPixmap(self.pixmap_home)
         self.label_home.resize(1000,800)
         
-        # Add buttons products to the grid layout
-        self.grid = QGridLayout()
-        button00 = QPushButton("All")
-        button00.clicked.connect(lambda x:self.page())
-        button00.setFixedWidth(100)
-        button00.setFixedHeight(100)
-        self.grid.addWidget(button00, 0, 0)
+        # Add buttons products to the window
 
-        button01 = QPushButton("Mobile")
-        button01.clicked.connect(lambda x:self.page())
-        button01.setFixedWidth(100)
-        button01.setFixedHeight(100)
-        self.grid.addWidget(button01, 0, 1)
+        self.button00.clicked.connect(lambda x:self.page(self.button00.text())) #********add list of products*******
+        self.button00.setGeometry(150,200,100,100)
 
-        button02 = QPushButton("Tablet")
-        button02.clicked.connect(lambda x:self.page())
-        button02.setFixedWidth(100)
-        button02.setFixedHeight(100)
-        self.grid.addWidget(button02, 0, 2)
-        button03 = QPushButton("TV")
-        button03.clicked.connect(lambda x:self.page())
-        button03.setFixedWidth(100)
-        button03.setFixedHeight(100)
-        self.grid.addWidget(button03, 0, 3)
-        button10 = QPushButton("Laptop")
-        button10.clicked.connect(lambda x:self.page())
-        button10.setFixedWidth(100)
-        button10.setFixedHeight(100)
-        self.grid.addWidget(button10, 1, 0)
-        button11 = QPushButton("Headset")
-        button11.clicked.connect(lambda x:self.page())
-        button11.setFixedWidth(100)
-        button11.setFixedHeight(100)
-        self.grid.addWidget(button11, 1, 1)
-        button12 = QPushButton("Favorites")
-        button12.clicked.connect(lambda x:self.page())
-        button12.setFixedWidth(100)
-        button12.setFixedHeight(100)
-        self.grid.addWidget(button12, 1, 2)
+        self.button01.clicked.connect(lambda x:self.page(self.button01.text()))
+        self.button01.setGeometry(350,200,100,100)
 
-        self.setLayout(self.grid) #add grid to window
+        self.button02.clicked.connect(lambda x:self.page(self.button02.text()))
+        self.button02.setGeometry(550,200,100,100)
         
+        self.button03.clicked.connect(lambda x:self.page(self.button03.text()))
+        self.button03.setGeometry(750,200,100,100)
+        
+        self.button10.clicked.connect(lambda x:self.page(self.button10.text()))
+        self.button10.setGeometry(150,400,100,100)
+        
+        self.button11.clicked.connect(lambda x:self.page(self.button11.text()))
+        self.button11.setGeometry(350,400,100,100)
+        
+        self.button12.clicked.connect(lambda x:self.page(self.button12.text()))
+        self.button12.setGeometry(550,400,100,100)
+
         #creat log out button to go sign in page 
         self.log_out.setGeometry(25,25,75,25)
         self.log_out.clicked.connect(self.sign_in_gui)
@@ -351,39 +342,60 @@ class RegistrationForm(QWidget):
 
         self.log_out.hide()
         self.label_home.clear()
-        for i in reversed(range(self.grid.count())):
-            widget = self.grid.itemAt(i).widget()
-            self.grid.removeWidget(widget)
-            widget.setParent(None)
+        self.button00.hide()
+        self.button01.hide()
+        self.button02.hide()
+        self.button03.hide()
+        self.button10.hide()
+        self.button11.hide()
+        self.button12.hide()
             
     def show_home(self):
         self.log_out.show()
-#--------------------------------------------------------------------------------------------     
-    def page(self):
+        self.button00.show()
+        self.button01.show()
+        self.button02.show()
+        self.button03.show()
+        self.button10.show()
+        self.button11.show()
+        self.button12.show()
+
+#--------------------------------------------------------------------------------------------   
+  
+    def page(self,name_products,products=['1','2','3','4','5','6','7']): #example for now
+
         self.hide_home()
         self.show_page()
+
         #set home background
         self.label_home.setPixmap(self.pixmap_home)
         self.label_home.resize(1000,800)
+
+        #set name products label
+        self.name_products.setText(name_products)
+        self.name_products.setStyleSheet("font-size: 20px")
+        self.name_products.setGeometry(425,0,150,25)
 
         #creat search box for searching amoung product
         self.search_field.setGeometry(350,50,200,25)
         self.search.setGeometry(575,50,75,25)
 
-        #creat log out button to go sign in page 
+        #creat home button to go home page 
         self.home.setGeometry(900,25,75,25)
         self.home.clicked.connect(self.home_page)
 
-        
-       
-        
         # Add some labels to the grid layout
-        for i in range(2):
-            for j in range(3):
-                button = QPushButton(str(i*2+j+1))
+        k=0
+        for i in range(math.ceil(len(products)/4)):
+            for j in range(4):
+                if k==len(products):
+                    break
+                button = QPushButton(products[i*4+j]) #set name product
                 button.setFixedWidth(100)
                 button.setFixedHeight(100)
+                button.clicked.connect(lambda _, product=products[i*4+j]: self.page_product(product)) 
                 self.grid.addWidget(button, i, j)
+                k+=1
                 
         # Create a new scroll area and set the widget as its content
         self.widget.setLayout(self.grid)
@@ -395,22 +407,27 @@ class RegistrationForm(QWidget):
         self.main_layout.addWidget(self.scroll_area)
         self.setLayout(self.main_layout)
 
-
     def hide_page(self):
         self.search_field.hide()
         self.search.hide()
         self.log_out.hide()
         self.home.hide()
         self.scroll_area.setParent(None)
+        self.name_products.hide()
         
-   
-
     def show_page(self):
         self.log_out.show()
         self.home.show()
         self.search_field.show()
         self.search.show()
-#-------------------------------------------------------------------------------   
+        self.name_products.show()
+
+#--------------------------------------------------------------------------------------------  
+
+    def page_product(self,product):
+        pass
+
+#--------------------------------------------------------------------------------------------  
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
