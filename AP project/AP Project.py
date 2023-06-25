@@ -6,6 +6,7 @@ from PIL import Image
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+import webbrowser
 
 class RegistrationForm(QWidget):
     def __init__(self):
@@ -66,6 +67,10 @@ class RegistrationForm(QWidget):
         self.back=QPushButton("Back",self)
         self.label_picture=QLabel(self)
         self.table = QTableWidget(self)
+        self.digikala=QPushButton(self)
+        self.divar=QPushButton(self)
+        self.torob=QPushButton(self)
+        self.label_price=QLabel("Product Price",self)
         
         self.hide_page_product() #hide element page product
         self.hide_page() #hide element page products
@@ -393,11 +398,11 @@ class RegistrationForm(QWidget):
         self.label_home.resize(1000,800)
 
         #set name products label
-        
-        '''self.name_products.setText(name_products)
-        self.name_products.setAlignment(Qt.AlignCenter)         #has error when click back button
-        self.name_products.setStyleSheet("font-size: 20px")
-        self.name_products.setGeometry(425,0,150,25)'''
+        if type(name_products) is str:
+            self.name_products.setText(name_products)
+            self.name_products.setAlignment(Qt.AlignCenter)       
+            self.name_products.setStyleSheet("font-size: 20px")
+            self.name_products.setGeometry(425,0,150,25)
 
         #creat search box for searching amoung product
         self.search_field.setGeometry(350,50,200,25)
@@ -486,7 +491,26 @@ class RegistrationForm(QWidget):
         self.table.verticalHeader().setVisible(False) #remove index
         self.table.horizontalHeader().setVisible(False)
 
+        #set button price product
+        self.label_price.setGeometry(100,550,300,25)
+
+        self.digikala.setGeometry(100,600,300,25)
+        self.digikala.clicked.connect(lambda x :self.open_site()) #set url site
+        self.digikala.setText(fr"Digikala : ") #set price
+
+        self.divar.setGeometry(100,650,300,25)
+        self.divar.clicked.connect(lambda x :self.open_site()) #set url site
+        self.divar.setText(fr"Divar : ")  #set price
+
+        self.torob.setGeometry(100,700,300,25)
+        self.torob.clicked.connect(lambda x :self.open_site()) #set url site
+        self.torob.setText(fr"Torob : ")  #set price
+
+
         self.show_page_product()
+
+    def open_site(self,url="https://www.google.com"): #for example
+        webbrowser.open(url)
 
     def hide_page_product(self):
 
@@ -494,6 +518,10 @@ class RegistrationForm(QWidget):
         self.back.hide()
         self.label_picture.hide()
         self.table.hide()
+        self.digikala.hide()
+        self.divar.hide()
+        self.torob.hide()
+        self.label_price.hide()
         
     def show_page_product(self):
 
@@ -502,6 +530,10 @@ class RegistrationForm(QWidget):
         self.back.show()
         self.label_picture.show()
         self.table.show()
+        self.digikala.show()
+        self.divar.show()
+        self.torob.show()
+        self.label_price.show()
 
 #--------------------------------------------------------------------------------------------  
 
