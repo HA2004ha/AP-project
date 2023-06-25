@@ -2,6 +2,7 @@ import sys
 import json
 import time
 import math
+from PIL import Image
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -61,7 +62,13 @@ class RegistrationForm(QWidget):
         self.scroll_area = QScrollArea()
         self.main_layout = QVBoxLayout()
 
-        self.hide_page()
+        #object for page product gui
+        self.back=QPushButton("Back",self)
+        self.label_picture=QLabel(self)
+        self.table = QTableWidget(self)
+        
+        self.hide_page_product() #hide element page product
+        self.hide_page() #hide element page products
         self.hide_sign_in() #hide element page sign in
         self.hide_sign_up() #hide element page sign up
         self.hide_home() #hide element page home
@@ -93,11 +100,13 @@ class RegistrationForm(QWidget):
         self.hide_sign_up()
         self.hide_home()
         self.hide_page()
+        self.hide_page_product()
         self.defult()
-
+        
         #set background
         self.label.setPixmap(self.pixmap)
         self.label.resize(1000,800)
+        
         
         # Username label and text field
         self.username_label_sign_in.setGeometry(390,250,150,25)
@@ -303,6 +312,7 @@ class RegistrationForm(QWidget):
     
     def home_page(self):
         self.hide_page()
+        self.hide_page_product()
         self.label.clear() #clear sign in background
 
         #set home background
@@ -365,6 +375,7 @@ class RegistrationForm(QWidget):
     def page(self,name_products,products=['1','2','3','4','5','6','7']): #example for now
 
         self.hide_home()
+        self.hide_page_product()
         self.show_page()
 
         #set home background
@@ -372,9 +383,11 @@ class RegistrationForm(QWidget):
         self.label_home.resize(1000,800)
 
         #set name products label
-        self.name_products.setText(name_products)
+        
+        '''self.name_products.setText(name_products)
+        self.name_products.setAlignment(Qt.AlignCenter)         #has error when click back button
         self.name_products.setStyleSheet("font-size: 20px")
-        self.name_products.setGeometry(425,0,150,25)
+        self.name_products.setGeometry(425,0,150,25)'''
 
         #creat search box for searching amoung product
         self.search_field.setGeometry(350,50,200,25)
@@ -408,6 +421,7 @@ class RegistrationForm(QWidget):
         self.setLayout(self.main_layout)
 
     def hide_page(self):
+        self.label_home.clear()
         self.search_field.hide()
         self.search.hide()
         self.log_out.hide()
@@ -425,7 +439,61 @@ class RegistrationForm(QWidget):
 #--------------------------------------------------------------------------------------------  
 
     def page_product(self,product):
-        pass
+        self.hide_page()
+        #set home background
+        self.label_home.setPixmap(self.pixmap_home)
+        self.label_home.resize(1000,800)
+
+        #set back button to go page products
+        self.back.setGeometry(800,25,75,25)
+        self.back.clicked.connect(self.page)
+        
+        #set photo product
+        image=Image.open("iphon.webp") #set name photo product
+        new_size=(300,300)
+        resize_image=image.resize(new_size)
+        resize_image.save("iphon.webp") #set name photo product
+        self.product_picture = QPixmap("iphon.webp") #set name photo product
+        self.label_picture.setPixmap(self.product_picture)
+        self.label_picture.setGeometry(100,100,300,300)
+
+        
+        self.table.setRowCount(10)
+        self.table.setColumnCount(2)
+        
+        for row in range(10):
+            for column in range(2):
+                item = QTableWidgetItem("Row %d, Column %d" % (row+1, column+1))
+                self.table.setItem(row, column, item)
+                
+        self.table.horizontalHeader().setDefaultSectionSize(150)
+        self.table.verticalHeader().setDefaultSectionSize(50)
+        self.table.setGeometry(600,100,302,502)
+        self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setVisible(False)
+
+
+
+        
+        
+
+
+
+        self.show_page_product()
+
+    def hide_page_product(self):
+        self.label_home.clear()
+        self.back.hide()
+        self.label_picture.hide()
+        self.table.hide()
+        
+
+    def show_page_product(self):
+        self.log_out.show()
+        self.home.show()
+        self.back.show()
+        self.label_picture.show()
+        self.table.show()
 
 #--------------------------------------------------------------------------------------------  
 
