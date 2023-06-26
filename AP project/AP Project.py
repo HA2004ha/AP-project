@@ -115,26 +115,42 @@ class RegistrationForm(QWidget):
     def sign_in_gui(self):
         
         # Username label and text field
-        self.username_label_sign_in.setGeometry(350,250,150,25)
+        self.username_label_sign_in.setGeometry(375,250,100,25)
         self.username_label_sign_in.setStyleSheet("font-size: 20px")
-        self.username_field_sign_in.setGeometry(450,250,150,25)
-
+        self.username_field_sign_in.setGeometry(475,250,150,25)
+        
         # Password label and text field       
-        self.password_label_sign_in.setGeometry(350,300,150,25)
+        self.password_label_sign_in.setGeometry(375,300,100,25)
         self.password_label_sign_in.setStyleSheet("font-size: 20px")
         self.password_field_sign_in.setEchoMode(QLineEdit.Password)
-        self.password_field_sign_in.setGeometry(450,300,150,25)
+        self.password_field_sign_in.setGeometry(475,300,150,25)
 
         # sign in button 
-        self.sign_in_button1.setGeometry(468,400,75,25)
-        self.sign_in_button1.setStyleSheet("border : 2px solid  black;")
+        self.sign_in_button1.setGeometry(450,400,100,35)
         self.sign_in_button1.clicked.connect(self.sign_in_user)
-
+        self.sign_in_button1.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                    "fx:0.5,fy:0.5,radius:0.6,"
+                    "stop:0 white, stop:1 #d30102);"
+                    "border-style: outset;"
+                    "border-width: 2px;"
+                    "border-radius: 10px;"
+                    "border-color: gray;"
+                    "padding: 6px;"
+                    "color:black;"
+                    "font-size:20px;")
         # sign up button
-        self.sign_up_button1.setGeometry(468,760,75,25)
-        self.sign_up_button1.setStyleSheet("border-radius : 20px")
+        self.sign_up_button1.setGeometry(463,760,74,30)
         self.sign_up_button1.clicked.connect(self.show_sign_up)
-
+        self.sign_up_button1.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+            "fx:0.5,fy:0.5,radius:0.6,"
+            "stop:0 white, stop:1 #d30102);"
+            "border-style: outset;"
+            "border-width: 2px;"
+            "border-radius: 10px;"
+            "border-color: gray;"
+            "padding: 6px;"
+            "color:black;"
+            "font-size:15px;")
         #creat label error message
         self.error_sign_in.setAlignment(Qt.AlignCenter)
         self.error_sign_in.setGeometry(350,350,300,25)
@@ -224,14 +240,33 @@ class RegistrationForm(QWidget):
         self.repeat_password_field_sign_up.setGeometry(510,300,150,25)
 
         # sign in button
-        self.sign_up_button2.setGeometry(468,400,75,25)
+        self.sign_up_button2.setGeometry(450,400,100,35)
         self.sign_up_button2.setStyleSheet("border : 2px solid  black;")
         self.sign_up_button2.clicked.connect(self.sign_up_user)
+        self.sign_up_button2.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+            "fx:0.5,fy:0.5,radius:0.6,"
+            "stop:0 white, stop:1 #d30102);"
+            "border-style: outset;"
+            "border-width: 2px;"
+            "border-radius: 10px;"
+            "border-color: gray;"
+            "padding: 6px;"
+            "color:black;"
+            "font-size:20px;")
 
         # sign up button
-        self.sign_in_button2.setGeometry(468,760,75,25)
-        self.sign_in_button2.setStyleSheet("border-radius : 20px")
+        self.sign_in_button2.setGeometry(463,760,74,30)
         self.sign_in_button2.clicked.connect(self.show_sign_in)
+        self.sign_in_button2.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+            "fx:0.5,fy:0.5,radius:0.6,"
+            "stop:0 white, stop:1 #d30102);"
+            "border-style: outset;"
+            "border-width: 2px;"
+            "border-radius: 10px;"
+            "border-color: gray;"
+            "padding: 6px;"
+            "color:black;"
+            "font-size:15px;")
 
         #creat label error message
         self.error_sign_up.setAlignment(Qt.AlignCenter)
