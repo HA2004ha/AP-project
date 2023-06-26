@@ -2,7 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from time import sleep
-import re
+from collections import OrderedDict
+from dgkala_data_getter import get_features
 arabic_to_latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹.", "0123456789.")
 
 class Product:
@@ -25,9 +26,13 @@ class Product:
         self._stars:float = None
         self._unavailable:bool = False
         self._link = None
+        self._features:OrderedDict = None
         self.name = name
         self.price = price
         self.stars = stars
+        self.link = link
+        self.features_setter()
+
 
     @property
     def name(self):
@@ -69,6 +74,13 @@ class Product:
     @link.setter
     def link(self, link):
         self._link = link
+
+    @property
+    def features(self):
+        return self._features
+    
+    def features_setter(self):    # Gets features using previous module
+        self._features = get_features(self._link)
 
 
 def main(search_word = 'آیفون 13 پرو'):
