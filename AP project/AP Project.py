@@ -11,20 +11,22 @@ import webbrowser
 class RegistrationForm(QWidget):
     def __init__(self):
         super().__init__()
+
         #set titele and size window
         self.setWindowTitle('Mini Torob')
         self.setFixedSize(1000, 800)
 
-        #set home background
-        self.pixmap_home = QPixmap("home.jpg")
-        self.label_home=QLabel(self)
+        #List of products
+        self.favorites_list=[]
 
-        #set sign in and up backgroung
-        self.pixmap = QPixmap("background.jpg")
+        #set backgroung
+        self.pixmap = QPixmap("home.jpg")
         self.label=QLabel(self)
+        self.label.setPixmap(self.pixmap)
+        self.label.resize(1000,800)
 
         #object for sign in gui
-        self.username_label_sign_in = QLabel('Username :', self)
+        self.username_label_sign_in = QLabel('Username:', self)
         self.username_field_sign_in = QLineEdit(self)
         self.password_label_sign_in = QLabel('Password:', self)
         self.password_field_sign_in = QLineEdit(self)
@@ -47,13 +49,13 @@ class RegistrationForm(QWidget):
         self.search_field=QLineEdit(self)
         self.search=QPushButton('Search',self)
         self.log_out=QPushButton("Log Out",self)
-        self.button00 = QPushButton("All Products",self)
-        self.button01 = QPushButton("Mobile",self)
-        self.button02 = QPushButton("Tablet",self)
-        self.button03 = QPushButton("TV",self)
-        self.button10 = QPushButton("Laptop",self)
-        self.button11 = QPushButton("Headset",self)
-        self.button12 = QPushButton("Favorites",self)
+        self.all_product_btn = QPushButton("All Products",self)
+        self.mobiles_btn = QPushButton("Mobile",self)
+        self.tablets_btn = QPushButton("Tablet",self)
+        self.tves_btn = QPushButton("TV",self)
+        self.laptops_btn = QPushButton("Laptop",self)
+        self.headset_btn = QPushButton("Headset",self)
+        self.favorites_btn = QPushButton("Favorites",self)
 
         #object for page gui
         self.name_products = QLabel('', self)
@@ -71,18 +73,25 @@ class RegistrationForm(QWidget):
         self.divar=QPushButton(self)
         self.torob=QPushButton(self)
         self.label_price=QLabel("Product Price",self)
-        
+        self.favorit_button=QPushButton("My Favorit",self)
+
         self.hide_page_product() #hide element page product
         self.hide_page() #hide element page products
         self.hide_sign_in() #hide element page sign in
         self.hide_sign_up() #hide element page sign up
         self.hide_home() #hide element page home
-        self.sign_in_gui() #show and creat sign in page
+
+        self.sign_in_gui()
+        self.sign_up_gui()
+        self.home_page()
+
+        self.show_sign_in() #start program
 
 #--------------------------------------------------------------------------------------------    
     
     #Returning to the first state of errors and input and registration fields
     def defult(self):
+
         #defult sign in
         self.password_field_sign_in.setStyleSheet("border : 2px solid  white;")
         self.username_field_sign_in.setStyleSheet("border : 2px solid  white;")
@@ -102,46 +111,35 @@ class RegistrationForm(QWidget):
         self.error_sign_up.clear()
 
 #--------------------------------------------------------------------------------------------
+    
     def sign_in_gui(self):
-
-        self.hide_sign_up()
-        self.hide_home()
-        self.hide_page()
-        self.hide_page_product()
-        self.defult()
-        
-        #set background
-        self.label.setPixmap(self.pixmap)
-        self.label.resize(1000,800)
         
         # Username label and text field
-        self.username_label_sign_in.setGeometry(390,250,150,25)
+        self.username_label_sign_in.setGeometry(350,250,150,25)
         self.username_label_sign_in.setStyleSheet("font-size: 20px")
-        self.username_field_sign_in.setGeometry(500,250,150,25)
+        self.username_field_sign_in.setGeometry(450,250,150,25)
 
         # Password label and text field       
-        self.password_label_sign_in.setGeometry(390,300,150,25)
+        self.password_label_sign_in.setGeometry(350,300,150,25)
         self.password_label_sign_in.setStyleSheet("font-size: 20px")
         self.password_field_sign_in.setEchoMode(QLineEdit.Password)
-        self.password_field_sign_in.setGeometry(500,300,150,25)
+        self.password_field_sign_in.setGeometry(450,300,150,25)
 
         # sign in button 
-        self.sign_in_button1.setGeometry(508,400,75,25)
+        self.sign_in_button1.setGeometry(468,400,75,25)
         self.sign_in_button1.setStyleSheet("border : 2px solid  black;")
         self.sign_in_button1.clicked.connect(self.sign_in_user)
 
         # sign up button
-        self.sign_up_button1.setGeometry(447,760,75,25)
+        self.sign_up_button1.setGeometry(468,760,75,25)
         self.sign_up_button1.setStyleSheet("border-radius : 20px")
-        self.sign_up_button1.clicked.connect(self.sign_up_gui)
+        self.sign_up_button1.clicked.connect(self.show_sign_up)
 
         #creat label error message
         self.error_sign_in.setAlignment(Qt.AlignCenter)
-        self.error_sign_in.setGeometry(390,350,300,25)
+        self.error_sign_in.setGeometry(350,350,300,25)
         self.error_sign_in.setStyleSheet("font-size: 20px;color : red")
 
-        self.show_sign_in()
-   
     def sign_in_user(self):
 
         #get user and password
@@ -156,8 +154,7 @@ class RegistrationForm(QWidget):
             with open('users.json', 'r') as f:
                 data = json.load(f)
                 if data[username] == password:
-                    self.hide_sign_in()
-                    self.home_page()
+                    self.show_home()
                 else:
                     self.password_field_sign_in.setStyleSheet("border : 2px solid  red;")
                     self.error_sign_in.setText("Invalid Password")
@@ -180,7 +177,7 @@ class RegistrationForm(QWidget):
                 QApplication.processEvents()
         
     def hide_sign_in(self):
-
+        
         self.username_field_sign_in.hide()
         self.username_label_sign_in.hide()
         self.password_field_sign_in.hide()
@@ -190,59 +187,56 @@ class RegistrationForm(QWidget):
         self.error_sign_in.hide()
 
     def show_sign_in(self):
-
+        
+        self.hide_sign_up()
+        self.hide_home()
+        self.hide_page()
+        self.hide_page_product()
+        
         self.username_field_sign_in.show()
         self.username_label_sign_in.show()
         self.password_field_sign_in.show()
         self.password_label_sign_in.show()
         self.sign_in_button1.show()
         self.sign_up_button1.show()
-        self.error_sign_in.show()    
+        self.error_sign_in.show()  
+        self.defult()
 
 #--------------------------------------------------------------------------------------------
 
     def sign_up_gui(self):
 
-        self.hide_sign_in() 
-        self.defult()
-
-        #set background
-        self.label.setPixmap(self.pixmap)
-        self.label.resize(1000,800)
-
         # Username label and text field
-        self.username_label_sign_up.setGeometry(390,200,150,25)
+        self.username_label_sign_up.setGeometry(340,200,150,25)
         self.username_label_sign_up.setStyleSheet("font-size: 20px")
-        self.username_field_sign_up.setGeometry(560,200,150,25)
+        self.username_field_sign_up.setGeometry(510,200,150,25)
 
         # Password label and text field 
-        self.password_label_sign_up.setGeometry(390,250,150,25)
+        self.password_label_sign_up.setGeometry(340,250,150,25)
         self.password_label_sign_up.setStyleSheet("font-size: 20px")
         self.password_field_sign_up.setEchoMode(QLineEdit.Password)
-        self.password_field_sign_up.setGeometry(560,250,150,25)
+        self.password_field_sign_up.setGeometry(510,250,150,25)
 
         # reprat Password label and text field
-        self.repeat_password_label_sign_up.setGeometry(390,300,170,25)
+        self.repeat_password_label_sign_up.setGeometry(340,300,170,25)
         self.repeat_password_label_sign_up.setStyleSheet("font-size: 20px")
         self.repeat_password_field_sign_up.setEchoMode(QLineEdit.Password)
-        self.repeat_password_field_sign_up.setGeometry(560,300,150,25)
+        self.repeat_password_field_sign_up.setGeometry(510,300,150,25)
 
         # sign in button
-        self.sign_up_button2.setGeometry(518,400,75,25)
+        self.sign_up_button2.setGeometry(468,400,75,25)
         self.sign_up_button2.setStyleSheet("border : 2px solid  black;")
         self.sign_up_button2.clicked.connect(self.sign_up_user)
 
         # sign up button
-        self.sign_in_button2.setGeometry(447,760,75,25)
+        self.sign_in_button2.setGeometry(468,760,75,25)
         self.sign_in_button2.setStyleSheet("border-radius : 20px")
-        self.sign_in_button2.clicked.connect(self.sign_in_gui)
+        self.sign_in_button2.clicked.connect(self.show_sign_in)
 
         #creat label error message
         self.error_sign_up.setAlignment(Qt.AlignCenter)
-        self.error_sign_up.setGeometry(310,350,500,25)
+        self.error_sign_up.setGeometry(250,350,500,25)
         self.error_sign_up.setStyleSheet("font-size: 20px;color : red")
-
-        self.show_sign_up()
 
     def sign_up_user(self):
 
@@ -286,7 +280,7 @@ class RegistrationForm(QWidget):
                     data[username] = password
                     with open('users.json', 'w') as f:
                         json.dump(data, f)
-                    self.sign_in_gui()
+                    self.show_sign_in()
                 else: 
                     self.repeat_password_field_sign_up.setStyleSheet("border : 2px solid  red;")
                     self.error_sign_up.setText("Repeat password not match!")
@@ -299,7 +293,7 @@ class RegistrationForm(QWidget):
                         QApplication.processEvents()    
 
     def hide_sign_up(self):
-
+        
         self.username_field_sign_up.hide()
         self.username_label_sign_up.hide()
         self.password_field_sign_up.hide()
@@ -312,6 +306,8 @@ class RegistrationForm(QWidget):
 
     def show_sign_up(self):
 
+        self.hide_sign_in() 
+
         self.username_field_sign_up.show()
         self.username_label_sign_up.show()
         self.password_field_sign_up.show()
@@ -321,81 +317,67 @@ class RegistrationForm(QWidget):
         self.sign_in_button2.show()
         self.sign_up_button2.show()
         self.error_sign_up.show() 
+        self.defult()
 
 #-------------------------------------------------------------------------------------------- 
     
     def home_page(self):
-        self.hide_page()
-        self.hide_page_product()
-        self.label.clear() #clear sign in background
 
-        #set home background
-        self.label_home.setPixmap(self.pixmap_home)
-        self.label_home.resize(1000,800)
-        
         # Add buttons products to the window
+        self.all_product_btn.clicked.connect(lambda x:self.page(self.all_product_btn.text(),["1","2"]+["3","4"])) 
+        self.all_product_btn.setGeometry(150,200,100,100)
 
-        self.button00.clicked.connect(lambda x:self.page(self.button00.text())) #********add list of products*******
-        self.button00.setGeometry(150,200,100,100)
+        self.mobiles_btn.clicked.connect(lambda x:self.page(self.mobiles_btn.text(),["5","6"]))
+        self.mobiles_btn.setGeometry(350,200,100,100)
 
-        self.button01.clicked.connect(lambda x:self.page(self.button01.text()))
-        self.button01.setGeometry(350,200,100,100)
-
-        self.button02.clicked.connect(lambda x:self.page(self.button02.text()))
-        self.button02.setGeometry(550,200,100,100)
+        self.tablets_btn.clicked.connect(lambda x:self.page(self.tablets_btn.text(),["7","8"]))
+        self.tablets_btn.setGeometry(550,200,100,100)
         
-        self.button03.clicked.connect(lambda x:self.page(self.button03.text()))
-        self.button03.setGeometry(750,200,100,100)
+        self.tves_btn.clicked.connect(lambda x:self.page(self.tves_btn.text(),["9","10"]))
+        self.tves_btn.setGeometry(750,200,100,100)
         
-        self.button10.clicked.connect(lambda x:self.page(self.button10.text()))
-        self.button10.setGeometry(150,400,100,100)
+        self.laptops_btn.clicked.connect(lambda x:self.page(self.laptops_btn.text(),["11","12"]))
+        self.laptops_btn.setGeometry(150,400,100,100)
         
-        self.button11.clicked.connect(lambda x:self.page(self.button11.text()))
-        self.button11.setGeometry(350,400,100,100)
+        self.headset_btn.clicked.connect(lambda x:self.page(self.headset_btn.text(),["13","14"]))
+        self.headset_btn.setGeometry(350,400,100,100)
         
-        self.button12.clicked.connect(lambda x:self.page(self.button12.text()))
-        self.button12.setGeometry(550,400,100,100)
+        self.favorites_btn.clicked.connect(lambda x:self.page(self.favorites_btn.text(),self.favorites_list))
+        self.favorites_btn.setGeometry(550,400,100,100)
 
         #creat log out button to go sign in page 
         self.log_out.setGeometry(25,25,75,25)
-        self.log_out.clicked.connect(self.sign_in_gui)
-
-        self.show_home()
+        self.log_out.clicked.connect(self.show_sign_in)   
 
     def hide_home(self):
 
         self.log_out.hide()
-        self.label_home.clear()
-        self.button00.hide()
-        self.button01.hide()
-        self.button02.hide()
-        self.button03.hide()
-        self.button10.hide()
-        self.button11.hide()
-        self.button12.hide()
+        self.all_product_btn.hide()
+        self.mobiles_btn.hide()
+        self.tablets_btn.hide()
+        self.tves_btn.hide()
+        self.laptops_btn.hide()
+        self.headset_btn.hide()
+        self.favorites_btn.hide()
             
     def show_home(self):
-
+           
+        self.hide_sign_in()
+        self.hide_page()
+        self.hide_page_product()
+        
         self.log_out.show()
-        self.button00.show()
-        self.button01.show()
-        self.button02.show()
-        self.button03.show()
-        self.button10.show()
-        self.button11.show()
-        self.button12.show()
+        self.all_product_btn.show()
+        self.mobiles_btn.show()
+        self.tablets_btn.show()
+        self.tves_btn.show()
+        self.laptops_btn.show()
+        self.headset_btn.show()
+        self.favorites_btn.show()
 
 #--------------------------------------------------------------------------------------------   
   
-    def page(self,name_products,products=['1','2','3','4','5','6','7']): #example for now
-
-        self.hide_home()
-        self.hide_page_product()
-        self.show_page()
-
-        #set home background
-        self.label_home.setPixmap(self.pixmap_home)
-        self.label_home.resize(1000,800)
+    def page(self,name_products,products): 
 
         #set name products label
         if type(name_products) is str:
@@ -410,7 +392,17 @@ class RegistrationForm(QWidget):
 
         #creat home button to go home page 
         self.home.setGeometry(900,25,75,25)
-        self.home.clicked.connect(self.home_page)
+        self.home.clicked.connect(self.show_home)
+        
+        self.show_page(products)
+
+    #creat grid for name products and set on a layout     
+    def creat_grid(self,products):
+        #at the first clear grid (when click back button last grid is full  and its problem )
+        for i in reversed(range(self.grid.count())):
+            widget = self.grid.itemAt(i).widget()
+            self.grid.removeWidget(widget)
+            widget.setParent(None)
 
         # Add name products in page
         number_products=0
@@ -418,12 +410,13 @@ class RegistrationForm(QWidget):
             for j in range(4):
                 if number_products==len(products):
                     break
-                button = QPushButton(products[i*4+j]) #set name product
+                button = QPushButton(products[i*4+j]) 
                 button.setFixedWidth(100)
                 button.setFixedHeight(100)
-                button.clicked.connect(lambda _, product=products[i*4+j]: self.page_product(product)) 
+                button.clicked.connect(lambda _, product=products[i*4+j]: self.page_product(product,products)) 
                 self.grid.addWidget(button, i, j)
                 number_products+=1
+                
                 
         # Create a new scroll area and set the widget as its content
         self.widget.setLayout(self.grid)
@@ -437,15 +430,26 @@ class RegistrationForm(QWidget):
 
     def hide_page(self):
 
-        self.label_home.clear()
         self.search_field.hide()
         self.search.hide()
         self.log_out.hide()
         self.home.hide()
         self.scroll_area.setParent(None)
         self.name_products.hide()
+        self.favorit_button.hide()
+
+        #clear grid when change the page  
+        for i in reversed(range(self.grid.count())):
+            widget = self.grid.itemAt(i).widget()
+            self.grid.removeWidget(widget)
+            widget.setParent(None)
         
-    def show_page(self):
+    def show_page(self,products):
+
+        self.creat_grid(products)
+
+        self.hide_home()
+        self.hide_page_product()
 
         self.log_out.show()
         self.home.show()
@@ -455,17 +459,11 @@ class RegistrationForm(QWidget):
 
 #--------------------------------------------------------------------------------------------  
 
-    def page_product(self,product):
-
-        self.hide_page()
-
-        #set home background
-        self.label_home.setPixmap(self.pixmap_home)
-        self.label_home.resize(1000,800)
+    def page_product(self,product,products):
 
         #set back button to go page products
         self.back.setGeometry(800,25,75,25)
-        self.back.clicked.connect(self.page)
+        self.back.clicked.connect(lambda x : self.show_page(products))
         
         #set photo product at page product
         image=Image.open("iphon.webp") #set name photo product , just example
@@ -505,16 +503,26 @@ class RegistrationForm(QWidget):
         self.torob.setGeometry(100,700,300,25)
         self.torob.clicked.connect(lambda x :self.open_site()) #set url site
         self.torob.setText(fr"Torob : ")  #set price
-
+        
+        #set Favorit button 
+        self.favorit_button.setGeometry(450,750,100,25)
+        self.favorit_button.clicked.connect(lambda x:self.add_remove_favorites(product))
 
         self.show_page_product()
 
+    def add_remove_favorites(self,product):
+
+        if product in self.favorites_list:
+            self.favorites_list.remove(product)
+        else:
+            self.favorites_list.append(product)   
+
+    #open chrome
     def open_site(self,url="https://www.google.com"): #for example
         webbrowser.open(url)
 
     def hide_page_product(self):
 
-        self.label_home.clear()
         self.back.hide()
         self.label_picture.hide()
         self.table.hide()
@@ -522,8 +530,11 @@ class RegistrationForm(QWidget):
         self.divar.hide()
         self.torob.hide()
         self.label_price.hide()
-        
+        self.favorit_button.hide()
+         
     def show_page_product(self):
+
+        self.hide_page()
 
         self.log_out.show()
         self.home.show()
@@ -534,7 +545,8 @@ class RegistrationForm(QWidget):
         self.divar.show()
         self.torob.show()
         self.label_price.show()
-
+        self.favorit_button.show()
+    
 #--------------------------------------------------------------------------------------------  
 
 if __name__ == '__main__':
