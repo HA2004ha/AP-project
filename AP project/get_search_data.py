@@ -46,7 +46,7 @@ class Product:
         if price == 'ناموجود':
             self._unavailable = True
             self._current_price = 0
-        else:
+        else:    # Translates arabic digits to latino and removes ',' seperator
             manipulated_price = price.replace(',', '').translate(arabic_to_latin)
             self._current_price = int(manipulated_price)
 
@@ -71,30 +71,42 @@ class Product:
         self._link = link
 
 
-browser = webdriver.Chrome('chromedriver.exe')
+def main(search_word = 'آیفون 13 پرو'):
+    browser = webdriver.Chrome('chromedriver.exe')
 
-search_word = 'آیفون 13 پرو'
-search_word = search_word.replace(' ', '%20')
-url = 'https://www.digikala.com/search/?q=' + search_word
+    search_word = search_word.replace(' ', '%20')
+    url = 'https://www.digikala.com/search/?q=' + search_word
 
-browser.get(url)
-sleep(5)
+    browser.get(url)
+    sleep(5)
 
-items = []
-i = 1
-while True:
-    try:
-        item_name = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')
-        item_price = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[4]/div[1]/div/span')
+    # A list of product items
+    items = []
+    i = 1
+    while True:
+        # Loop until a problem occurs while getting data from dgkala
         try:
-            item_stars = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[3]/div[2]/p')
+            # Getting name
+            item_name = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')
+            # Getting price
+            item_price = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[4]/div[1]/div/span')
+            # Getting stars, if there is no such tag, the stars value is set to 0
+            try:
+                item_stars = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[3]/div[2]/p')
+            except:
+                item_stars = 0
+            # Getting href attrib of product div tag
+            item = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
+
+            # Appending item to the list
+            items.append(Product(item_name.text, item_price.text, item_stars.text, item.get_attribute('href')))
+
+            i += 1
+
         except:
-            item_stars = 0
-        item = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
+            break
 
-        items.append(Product(item_name.text, item_price.text, item_stars.text, item.get_attribute('href')))
+    return items
 
-        i += 1
-    except:
-        break
-
+if __name__ == '__main__':
+    main(search_word = 'آیفون 13 پرو')

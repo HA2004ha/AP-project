@@ -34,7 +34,6 @@ def get_features(url = 'https://www.digikala.com/product/dkp-8366616/%DA%AF%D9%8
             i += 1
 
         except:
-            print('reedi')
             break
 
 
