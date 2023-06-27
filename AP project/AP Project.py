@@ -630,13 +630,36 @@ class RegistrationForm(QWidget):
 
 if __name__ == '__main__':
 
-    mobile_lst=main(search_word = 'آیفون 13 پرو')
-    mobile_lst=mobile_lst
-    headset_lst=[]
-    tv_lst=[]
-    tablet_lst=[]
-    laptop_lst=[]
-    
+    with open('last_time.json', 'r') as l:
+        last_time = json.load(l)
+
+    if time.time() - last_time["time"]> 86400:
+        mobile_lst=main(search_word = 'آیفون 13 پرو')
+        headset_lst=[]
+        tv_lst=[]
+        tablet_lst=[]
+        laptop_lst=[]
+
+        with shelve.open('data_products') as db:
+            db['mobile_lst']=mobile_lst
+            db['headset_lst']=headset_lst
+            db['tv_lst']=tv_lst
+            db['tablet_lst']=tablet_lst
+            db['laptop_lst']=laptop_lst
+
+        last_time["time"]=time.time()
+        with open('last_time.json', 'w') as l:
+            json.dump(last_time, l)
+    else: 
+        
+        with shelve.open('data_products') as db:
+                        
+            mobile_lst=db['mobile_lst']
+            headset_lst=db['headset_lst']
+            tv_lst=db['tv_lst']
+            tablet_lst=db['tablet_lst']
+            laptop_lst=db['laptop_lst']
+
     app = QApplication(sys.argv)
     registration_form = RegistrationForm(mobile_lst,headset_lst,tv_lst,tablet_lst,laptop_lst)
     registration_form.show()
