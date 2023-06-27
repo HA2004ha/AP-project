@@ -74,6 +74,8 @@ class RegistrationForm(QWidget):
         self.torob=QPushButton(self)
         self.label_price=QLabel("Product Price",self)
         self.favorit_button=QPushButton("My Favorit",self)
+        self.favorit_button.setGeometry(450,750,100,25)
+        self.favorit_button.clicked.connect(self.add_remove_favorites)
 
         self.hide_page_product() #hide element page product
         self.hide_page() #hide element page products
@@ -169,7 +171,15 @@ class RegistrationForm(QWidget):
         try:
             with open('users.json', 'r') as f:
                 data = json.load(f)
+
                 if data[username] == password:
+
+                    self.username=username #save username for add list favorite json file
+
+                    with open('favorites.json', 'r') as fa: #read list of favorite each user 
+                        favorit_lst = json.load(fa)
+                        self.favorites_list=favorit_lst[username]
+
                     self.show_home()
                 else:
                     self.password_field_sign_in.setStyleSheet("border : 2px solid  red;")
@@ -289,6 +299,10 @@ class RegistrationForm(QWidget):
         with open('users.json', 'r') as f: #creat or open json file for save data
             data = json.load(f)
 
+        #creat or open json file for save favorit list for each user    
+        with open('favorites.json', 'r') as fa:
+            favorit_lst = json.load(fa)    
+
         if username in data or len(username)==0:
             self.username_field_sign_up.setStyleSheet("border : 2px solid  red;")
             self.error_sign_up.setText("Username already exists or Less than 1 character!")
@@ -311,10 +325,17 @@ class RegistrationForm(QWidget):
                         self.password_field_sign_up.move(self.password_field_sign_up.x() + 5, self.password_field_sign_up.y())
                     QApplication.processEvents() 
             else: 
-                if password==repeat_password  :   
+
+                if password==repeat_password  : 
+
                     data[username] = password
                     with open('users.json', 'w') as f:
                         json.dump(data, f)
+
+                    favorit_lst[username]=[]
+                    with open('favorites.json', 'w') as fa:
+                        json.dump(favorit_lst, fa)  
+
                     self.show_sign_in()
                 else: 
                     self.repeat_password_field_sign_up.setStyleSheet("border : 2px solid  red;")
@@ -539,18 +560,25 @@ class RegistrationForm(QWidget):
         self.torob.clicked.connect(lambda x :self.open_site()) #set url site
         self.torob.setText(fr"Torob : ")  #set price
         
-        #set Favorit button 
-        self.favorit_button.setGeometry(450,750,100,25)
-        self.favorit_button.clicked.connect(lambda x:self.add_remove_favorites(product))
+        #set Favorit product 
+        self.favorit_product=product
 
         self.show_page_product()
+        
+    #add or remove produt  favorit page
+    def add_remove_favorites(self):
 
-    def add_remove_favorites(self,product):
-
-        if product in self.favorites_list:
-            self.favorites_list.remove(product)
+        if self.favorit_product in self.favorites_list:
+            self.favorites_list.remove(self.favorit_product)
         else:
-            self.favorites_list.append(product)   
+            self.favorites_list.append(self.favorit_product)
+             
+        with open('favorites.json', 'r') as fa:
+            favorit_lst = json.load(fa) 
+            
+        favorit_lst[self.username]=self.favorites_list
+        with open('favorites.json', 'w') as fa:
+            json.dump(favorit_lst, fa)     
 
     #open chrome
     def open_site(self,url="https://www.google.com"): #for example
