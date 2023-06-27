@@ -11,14 +11,23 @@ def get_features(url = 'https://www.digikala.com/product/dkp-8366616/%DA%AF%D9%8
 
     sleep(2)
 
-    # Scrolling down to the features section
-    browser.execute_script("window.scrollBy(0, 4000);")
-    sleep(2)
+    scroller = 5
+    while True:
+        # Scrolling down to the features section
+        browser.execute_script(f"window.scrollBy(0, {scroller});")
+        sleep(2)
 
-    # Click on more button
-    features_btn = browser.find_element(By.XPATH, '//*[@id="specification"]/span')
-    features_btn.click()
-    sleep(3)
+        try:
+            # Click on more button
+            features_btn = browser.find_element(By.XPATH, '//*[@id="specification"]/span')
+            features_btn.click()
+            sleep(3)
+            break
+        except:
+            if scroller >= 8000:
+                break
+        scroller += 10
+        print('scroller: ', scroller)
 
     # Getting product features
     prod_features = OrderedDict()

@@ -118,7 +118,10 @@ def main(search_word = 'آیفون 13 پرو'):
         except:
             break
 
+        if len(items) >= 10:
+            break
+
     return items
 
 if __name__ == '__main__':
-    main(search_word = 'آیفون 13 پرو')
+    print(main(search_word = 'آیفون 13 پرو'))
