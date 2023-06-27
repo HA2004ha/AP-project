@@ -7,9 +7,24 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 import webbrowser
+from get_search_data import *
+import shelve
+
+def break_str(string):
+    new_string = ""
+    j=0
+    for i in range(len(string)):
+        if string[i]==" ":
+            j+=1
+        if string[i] == " " and  i != len(string)-1 and j%2==0:
+            
+            new_string += "\n"
+        else:
+            new_string += string[i]
+    return new_string
 
 class RegistrationForm(QWidget):
-    def __init__(self):
+    def __init__(self,mobile_lst,headset_lst,tv_lst,tablet_lst,laptop_lst):
         super().__init__()
 
         #set titele and size window
@@ -17,6 +32,12 @@ class RegistrationForm(QWidget):
         self.setFixedSize(1000, 800)
 
         #List of products
+        self.mobile_lst=mobile_lst
+        self.headset_lst=headset_lst
+        self.tv_lst=tv_lst
+        self.tablet_lst=tablet_lst
+        self.laptop_lst=laptop_lst
+        self.all_lst=self.mobile_lst+self.headset_lst+self.tv_lst+self.tablet_lst+self.laptop_lst
         self.favorites_list=[]
 
         #set backgroung
@@ -39,7 +60,7 @@ class RegistrationForm(QWidget):
         self.username_field_sign_up = QLineEdit(self)
         self.password_label_sign_up = QLabel('Password:', self)
         self.password_field_sign_up = QLineEdit(self)
-        self.repeat_password_label_sign_up = QLabel(' Repeat Password:', self)
+        self.repeat_password_label_sign_up = QLabel('Repeat Password:', self)
         self.repeat_password_field_sign_up = QLineEdit(self)
         self.sign_in_button2 = QPushButton('Sign in', self)
         self.sign_up_button2 = QPushButton('Sign up', self)
@@ -176,9 +197,8 @@ class RegistrationForm(QWidget):
 
                     self.username=username #save username for add list favorite json file
 
-                    with open('favorites.json', 'r') as fa: #read list of favorite each user 
-                        favorit_lst = json.load(fa)
-                        self.favorites_list=favorit_lst[username]
+                    with shelve.open('my_data_favorites') as db:
+                        self.favorites_list = db[username]
 
                     self.show_home()
                 else:
@@ -299,9 +319,7 @@ class RegistrationForm(QWidget):
         with open('users.json', 'r') as f: #creat or open json file for save data
             data = json.load(f)
 
-        #creat or open json file for save favorit list for each user    
-        with open('favorites.json', 'r') as fa:
-            favorit_lst = json.load(fa)    
+             
 
         if username in data or len(username)==0:
             self.username_field_sign_up.setStyleSheet("border : 2px solid  red;")
@@ -332,9 +350,8 @@ class RegistrationForm(QWidget):
                     with open('users.json', 'w') as f:
                         json.dump(data, f)
 
-                    favorit_lst[username]=[]
-                    with open('favorites.json', 'w') as fa:
-                        json.dump(favorit_lst, fa)  
+                    with shelve.open('my_data_favorites') as db:
+                        db[username] = []
 
                     self.show_sign_in()
                 else: 
@@ -380,22 +397,22 @@ class RegistrationForm(QWidget):
     def home_page(self):
 
         # Add buttons products to the window
-        self.all_product_btn.clicked.connect(lambda x:self.page(self.all_product_btn.text(),["1","2"]+["3","4"])) 
+        self.all_product_btn.clicked.connect(lambda x:self.page(self.all_product_btn.text(),self.all_lst)) 
         self.all_product_btn.setGeometry(150,200,100,100)
 
-        self.mobiles_btn.clicked.connect(lambda x:self.page(self.mobiles_btn.text(),["5","6"]))
+        self.mobiles_btn.clicked.connect(lambda x:self.page(self.mobiles_btn.text(),self.mobile_lst))
         self.mobiles_btn.setGeometry(350,200,100,100)
 
-        self.tablets_btn.clicked.connect(lambda x:self.page(self.tablets_btn.text(),["7","8"]))
+        self.tablets_btn.clicked.connect(lambda x:self.page(self.tablets_btn.text(),self.tablet_lst))
         self.tablets_btn.setGeometry(550,200,100,100)
         
-        self.tves_btn.clicked.connect(lambda x:self.page(self.tves_btn.text(),["9","10"]))
+        self.tves_btn.clicked.connect(lambda x:self.page(self.tves_btn.text(),self.tv_lst))
         self.tves_btn.setGeometry(750,200,100,100)
         
-        self.laptops_btn.clicked.connect(lambda x:self.page(self.laptops_btn.text(),["11","12"]))
+        self.laptops_btn.clicked.connect(lambda x:self.page(self.laptops_btn.text(),self.laptop_lst))
         self.laptops_btn.setGeometry(150,400,100,100)
         
-        self.headset_btn.clicked.connect(lambda x:self.page(self.headset_btn.text(),["13","14"]))
+        self.headset_btn.clicked.connect(lambda x:self.page(self.headset_btn.text(),self.headset_lst))
         self.headset_btn.setGeometry(350,400,100,100)
         
         self.favorites_btn.clicked.connect(lambda x:self.page(self.favorites_btn.text(),self.favorites_list))
@@ -466,7 +483,7 @@ class RegistrationForm(QWidget):
             for j in range(4):
                 if number_products==len(products):
                     break
-                button = QPushButton(products[i*4+j]) 
+                button = QPushButton(break_str(products[i*4+j].name)) 
                 button.setFixedWidth(100)
                 button.setFixedHeight(100)
                 button.clicked.connect(lambda _, product=products[i*4+j]: self.page_product(product,products)) 
@@ -528,35 +545,38 @@ class RegistrationForm(QWidget):
         resize_image.save("iphon.webp") #set name photo product , just example
         self.product_picture = QPixmap("iphon.webp") #set name photo product , just example
         self.label_picture.setPixmap(self.product_picture)
-        self.label_picture.setGeometry(100,100,300,300)
+        self.label_picture.setGeometry(600,100,300,300)
 
         #number detail product
+        list_detail=[["Name",product.name],["Starts",str(product.stars)]]
+
         self.table.setRowCount(10)
         self.table.setColumnCount(2)
-        
-        for row in range(10):
+
+        for row in range(2):
             for column in range(2):
-                item = QTableWidgetItem("Row %d, Column %d" % (row+1, column+1)) #set detail product
+                item = QTableWidgetItem(list_detail[row][column])
+                item.setTextAlignment(Qt.AlignCenter) #set detail product
                 self.table.setItem(row, column, item)
                 
         self.table.horizontalHeader().setDefaultSectionSize(150) #size a tabel
         self.table.verticalHeader().setDefaultSectionSize(50)
-        self.table.setGeometry(600,100,302,502)
+        self.table.setGeometry(100,100,302,502)
         self.table.verticalHeader().setVisible(False) #remove index
         self.table.horizontalHeader().setVisible(False)
 
         #set button price product
-        self.label_price.setGeometry(100,550,300,25)
+        self.label_price.setGeometry(600,550,300,25)
 
-        self.digikala.setGeometry(100,600,300,25)
-        self.digikala.clicked.connect(lambda x :self.open_site()) #set url site
-        self.digikala.setText(fr"Digikala : ") #set price
+        self.digikala.setGeometry(600,600,300,25)
+        self.digikala.clicked.connect(lambda x :self.open_site(product.link)) #set url site
+        self.digikala.setText(fr"Digikala : {product.price}") #set price
 
-        self.divar.setGeometry(100,650,300,25)
+        self.divar.setGeometry(600,650,300,25)
         self.divar.clicked.connect(lambda x :self.open_site()) #set url site
         self.divar.setText(fr"Divar : ")  #set price
 
-        self.torob.setGeometry(100,700,300,25)
+        self.torob.setGeometry(600,700,300,25)
         self.torob.clicked.connect(lambda x :self.open_site()) #set url site
         self.torob.setText(fr"Torob : ")  #set price
         
@@ -573,12 +593,8 @@ class RegistrationForm(QWidget):
         else:
             self.favorites_list.append(self.favorit_product)
              
-        with open('favorites.json', 'r') as fa:
-            favorit_lst = json.load(fa) 
-            
-        favorit_lst[self.username]=self.favorites_list
-        with open('favorites.json', 'w') as fa:
-            json.dump(favorit_lst, fa)     
+        with shelve.open('my_data_favorites') as db:
+            db[self.username] = self.favorites_list     
 
     #open chrome
     def open_site(self,url="https://www.google.com"): #for example
@@ -613,7 +629,15 @@ class RegistrationForm(QWidget):
 #--------------------------------------------------------------------------------------------  
 
 if __name__ == '__main__':
+
+    mobile_lst=main(search_word = 'آیفون 13 پرو')
+    mobile_lst=mobile_lst
+    headset_lst=[]
+    tv_lst=[]
+    tablet_lst=[]
+    laptop_lst=[]
+    
     app = QApplication(sys.argv)
-    registration_form = RegistrationForm()
+    registration_form = RegistrationForm(mobile_lst,headset_lst,tv_lst,tablet_lst,laptop_lst)
     registration_form.show()
     sys.exit(app.exec_())
