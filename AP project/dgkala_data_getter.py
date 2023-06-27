@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver import ActionChains
 from time import sleep
 from collections import OrderedDict
 
@@ -11,11 +12,15 @@ def get_features(url = 'https://www.digikala.com/product/dkp-8366616/%DA%AF%D9%8
 
     sleep(2)
 
-    scroller = 5
+    actions = ActionChains(browser)
+
+    scroller = 0
     while True:
-        # Scrolling down to the features section
-        browser.execute_script(f"window.scrollBy(0, {scroller});")
-        sleep(2)
+        # Scrolling down to the features section, using keys
+        actions.key_down(Keys.DOWN).perform()
+        sleep(0.5)
+        actions.key_up(Keys.DOWN).perform()
+        sleep(0.1)
 
         try:
             # Click on more button
@@ -24,10 +29,9 @@ def get_features(url = 'https://www.digikala.com/product/dkp-8366616/%DA%AF%D9%8
             sleep(3)
             break
         except:
-            if scroller >= 8000:
+            if scroller >= 15:
                 break
-        scroller += 10
-        print('scroller: ', scroller)
+        scroller += 1
 
     # Getting product features
     prod_features = OrderedDict()
@@ -50,4 +54,4 @@ def get_features(url = 'https://www.digikala.com/product/dkp-8366616/%DA%AF%D9%8
 
 
 if __name__ == '__main__':
-    print(get_features(url = 'https://www.digikala.com/product/dkp-8366616/%DA%AF%D9%88%D8%B4%DB%8C-%D9%85%D9%88%D8%A8%D8%A7%DB%8C%D9%84-%D8%A7%D9%BE%D9%84-%D9%85%D8%AF%D9%84-iphone-13-ch-%D8%AF%D9%88-%D8%B3%DB%8C%D9%85-%DA%A9%D8%A7%D8%B1%D8%AA-%D8%B8%D8%B1%D9%81%DB%8C%D8%AA-128-%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA-%D9%88-%D8%B1%D9%85-4-%DA%AF%DB%8C%DA%AF%D8%A7%D8%A8%D8%A7%DB%8C%D8%AA-%D9%86%D8%A7%D8%AA-%D8%A7%DA%A9%D8%AA%DB%8C%D9%88/'))
+    print(get_features(url = 'https://www.digikala.com/product/dkp-613025/%D9%86%D9%88%D8%B4%DB%8C%D8%AF%D9%86%DB%8C-%D9%85%D8%A7%D9%84%D8%AA-%D8%A8%D8%A7-%D8%B7%D8%B9%D9%85-%D8%A2%D9%86%D8%A7%D9%86%D8%A7%D8%B3-%D8%A8%D8%A7%D8%B1%D8%A8%DB%8C%DA%A9%D9%86-%D9%85%D9%82%D8%AF%D8%A7%D8%B1-330-%D9%85%DB%8C%D9%84%DB%8C-%D9%84%DB%8C%D8%AA%D8%B1/'))
