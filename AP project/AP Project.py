@@ -16,7 +16,7 @@ def break_str(string):
     for i in range(len(string)):
         if string[i]==" ":
             j+=1
-        if string[i] == " " and  i != len(string)-1 and j%2==0:
+        if string[i] == " " and  i != len(string)-1 and j%3==0:
             
             new_string += "\n"
         else:
@@ -26,7 +26,7 @@ def break_str(string):
 class RegistrationForm(QWidget):
     def __init__(self,mobile_lst,headset_lst,tv_lst,tablet_lst,laptop_lst):
         super().__init__()
-
+          
         #set titele and size window
         self.setWindowTitle('Mini Torob')
         self.setFixedSize(1000, 800)
@@ -49,8 +49,10 @@ class RegistrationForm(QWidget):
         #object for sign in gui
         self.username_label_sign_in = QLabel('Username:', self)
         self.username_field_sign_in = QLineEdit(self)
+        self.username_field_sign_in.setPlaceholderText("Username")
         self.password_label_sign_in = QLabel('Password:', self)
         self.password_field_sign_in = QLineEdit(self)
+        self.password_field_sign_in.setPlaceholderText("Password")
         self.sign_in_button1 = QPushButton('Sign in', self)
         self.sign_up_button1 = QPushButton('Sign up', self)
         self.error_sign_in=QLabel("",self)
@@ -58,19 +60,43 @@ class RegistrationForm(QWidget):
         #object for sign up gui
         self.username_label_sign_up = QLabel('Username :', self)
         self.username_field_sign_up = QLineEdit(self)
+        self.username_field_sign_up.setPlaceholderText("Username")
         self.password_label_sign_up = QLabel('Password:', self)
         self.password_field_sign_up = QLineEdit(self)
+        self.password_field_sign_up.setPlaceholderText("Password")
         self.repeat_password_label_sign_up = QLabel('Repeat Password:', self)
         self.repeat_password_field_sign_up = QLineEdit(self)
+        self.repeat_password_field_sign_up.setPlaceholderText("Repeat Password")
         self.sign_in_button2 = QPushButton('Sign in', self)
         self.sign_up_button2 = QPushButton('Sign up', self)
         self.error_sign_up=QLabel("",self) 
 
         #object for home gui
         self.search_field=QLineEdit(self)
+        self.search_field.setPlaceholderText("Search Here")
         self.search=QPushButton('Search',self)
+        self.search.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                                "fx:0.5,fy:0.5,radius:0.6,"
+                                "stop:0 white, stop:1 #c0c0c0);"
+                                "border-style: outset;"
+                                "border-width: 3px;"
+                                "border-radius: 10px;"
+                                "border-color: gray;"
+                                "padding: 6px;"
+                                "color:black;"
+                                "font-size:15px;")
         self.search.clicked.connect(lambda x :self.searching(self.search_field.text()))
         self.log_out=QPushButton("Log Out",self)
+        self.log_out.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                                "fx:0.5,fy:0.5,radius:0.6,"
+                                "stop:0 white, stop:1 #d30102);"
+                                "border-style: outset;"
+                                "border-width: 3px;"
+                                "border-radius: 10px;"
+                                "border-color: gray;"
+                                "padding: 6px;"
+                                "color:black;"
+                                "font-size:15px;")
         self.all_product_btn = QPushButton("All Products",self)
         self.mobiles_btn = QPushButton("Mobile",self)
         self.tablets_btn = QPushButton("Tablet",self)
@@ -83,20 +109,81 @@ class RegistrationForm(QWidget):
         self.name_products = QLabel('', self)
         self.grid = QGridLayout()
         self.home=QPushButton("Home",self)
+        self.home.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                                "fx:0.5,fy:0.5,radius:0.6,"
+                                "stop:0 white, stop:1 #d30102);"
+                                "border-style: outset;"
+                                "border-width: 3px;"
+                                "border-radius: 10px;"
+                                "border-color: gray;"
+                                "padding: 6px;"
+                                "color:black;"
+                                "font-size:15px;")
         self.widget = QWidget()
         self.scroll_area = QScrollArea()
         self.main_layout = QVBoxLayout()
 
         #object for page product gui
         self.back=QPushButton("Back",self)
+        self.back.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                                "fx:0.5,fy:0.5,radius:0.6,"
+                                "stop:0 white, stop:1 #d30102);"
+                                "border-style: outset;"
+                                "border-width: 3px;"
+                                "border-radius: 10px;"
+                                "border-color: gray;"
+                                "padding: 6px;"
+                                "color:black;"
+                                "font-size:15px;")
         self.label_picture=QLabel(self)
         self.table = QTableWidget(self)
         self.digikala=QPushButton(self)
+        self.digikala.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                                    "fx:0.5,fy:0.5,radius:0.6,"
+                                    "stop:0 white, stop:1 #c0c0c0);"
+                                    "border-style: outset;"
+                                    "border-width: 3px;"
+                                    "border-radius: 10px;"
+                                    "border-color: gray;"
+                                    "padding: 6px;"
+                                    "color:black;"
+                                    "font-size:15px;")
         self.divar=QPushButton(self)
+        self.divar.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                                "fx:0.5,fy:0.5,radius:0.6,"
+                                "stop:0 white, stop:1 #c0c0c0);"
+                                "border-style: outset;"
+                                "border-width: 3px;"
+                                "border-radius: 10px;"
+                                "border-color: gray;"
+                                "padding: 6px;"
+                                "color:black;"
+                                "font-size:15px;")
         self.torob=QPushButton(self)
+        self.torob.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                                "fx:0.5,fy:0.5,radius:0.6,"
+                                "stop:0 white, stop:1 #c0c0c0);"
+                                "border-style: outset;"
+                                "border-width: 3px;"
+                                "border-radius: 10px;"
+                                "border-color: gray;"
+                                "padding: 6px;"
+                                "color:black;"
+                                "font-size:15px;")
         self.label_price=QLabel("Product Price",self)
-        self.favorit_button=QPushButton("My Favorit",self)
-        self.favorit_button.setGeometry(450,750,100,25)
+        self.label_price.setStyleSheet("font-size: 20px")
+        self.favorit_button=QPushButton("My Favorite",self)
+        self.favorit_button.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                                        "fx:0.5,fy:0.5,radius:0.6,"
+                                        "stop:0 white, stop:1 #c0c0c0);"
+                                        "border-style: outset;"
+                                        "border-width: 3px;"
+                                        "border-radius: 10px;"
+                                        "border-color: gray;"
+                                        "padding: 6px;"
+                                        "color:black;"
+                                        "font-size:15px;")
+        self.favorit_button.setGeometry(450,750,100,32)
         self.favorit_button.clicked.connect(self.add_remove_favorites)
 
         self.hide_page_product() #hide element page product
@@ -275,29 +362,29 @@ class RegistrationForm(QWidget):
         self.sign_up_button2.setStyleSheet("border : 2px solid  black;")
         self.sign_up_button2.clicked.connect(self.sign_up_user)
         self.sign_up_button2.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
-            "fx:0.5,fy:0.5,radius:0.6,"
-            "stop:0 white, stop:1 #d30102);"
-            "border-style: outset;"
-            "border-width: 2px;"
-            "border-radius: 10px;"
-            "border-color: gray;"
-            "padding: 6px;"
-            "color:black;"
-            "font-size:20px;")
+                                            "fx:0.5,fy:0.5,radius:0.6,"
+                                            "stop:0 white, stop:1 #d30102);"
+                                            "border-style: outset;"
+                                            "border-width: 2px;"
+                                            "border-radius: 10px;"
+                                            "border-color: gray;"
+                                            "padding: 6px;"
+                                            "color:black;"
+                                            "font-size:20px;")
 
         # sign up button
         self.sign_in_button2.setGeometry(463,760,74,30)
         self.sign_in_button2.clicked.connect(self.show_sign_in)
         self.sign_in_button2.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
-            "fx:0.5,fy:0.5,radius:0.6,"
-            "stop:0 white, stop:1 #d30102);"
-            "border-style: outset;"
-            "border-width: 2px;"
-            "border-radius: 10px;"
-            "border-color: gray;"
-            "padding: 6px;"
-            "color:black;"
-            "font-size:15px;")
+                                            "fx:0.5,fy:0.5,radius:0.6,"
+                                            "stop:0 white, stop:1 #d30102);"
+                                            "border-style: outset;"
+                                            "border-width: 2px;"
+                                            "border-radius: 10px;"
+                                            "border-color: gray;"
+                                            "padding: 6px;"
+                                            "color:black;"
+                                            "font-size:15px;")
 
         #creat label error message
         self.error_sign_up.setAlignment(Qt.AlignCenter)
@@ -319,8 +406,6 @@ class RegistrationForm(QWidget):
         #set or error sin up user
         with open('users.json', 'r') as f: #creat or open json file for save data
             data = json.load(f)
-
-             
 
         if username in data or len(username)==0:
             self.username_field_sign_up.setStyleSheet("border : 2px solid  red;")
@@ -419,8 +504,22 @@ class RegistrationForm(QWidget):
         self.favorites_btn.clicked.connect(lambda x:self.page(self.favorites_btn.text(),self.favorites_list))
         self.favorites_btn.setGeometry(550,400,100,100)
 
+        #set style all buttons
+        list_button=[self.all_product_btn,self.mobiles_btn,self.tablets_btn,self.tves_btn,self.laptops_btn,self.headset_btn,self.favorites_btn]
+        for button in list_button:
+            button.setStyleSheet("background-color: qradialgradient(cx:0.8, cy:0.8,"
+                                "fx:0.8,fy:0.8,radius:1,"
+                                "stop:0 white, stop:1 #003366);"
+                                "border-style: outset;"
+                                "border-width: 3px;"
+                                "border-radius: 10px;"
+                                "border-color: gray;"
+                                "padding: 6px;"
+                                "color:black;"
+                                "font-weight : bold;")
+
         #creat log out button to go sign in page 
-        self.log_out.setGeometry(25,25,75,25)
+        self.log_out.setGeometry(25,35,100,35)
         self.log_out.clicked.connect(self.show_sign_in)   
 
     def hide_home(self):
@@ -458,15 +557,15 @@ class RegistrationForm(QWidget):
             self.name_products.setText(name_products)
             self.name_products.setAlignment(Qt.AlignCenter)       
             self.name_products.setStyleSheet("font-size: 20px")
-            self.name_products.setGeometry(425,0,150,25)
+            self.name_products.setGeometry(425,15,150,25)
 
         #creat search box for searching amoung product
-        self.search_field.setGeometry(350,50,200,25)
-        self.search.setGeometry(575,50,75,25)
+        self.search_field.setGeometry(325,70,200,30)
+        self.search.setGeometry(550,70,100,30)
         self.list_products_for_search=products
 
         #creat home button to go home page 
-        self.home.setGeometry(900,25,75,25)
+        self.home.setGeometry(875,35,100,35)
         self.home.clicked.connect(self.show_home)
 
         self.show_page(products)
@@ -496,6 +595,17 @@ class RegistrationForm(QWidget):
                 if number_products==len(products):
                     break
                 button = QPushButton(break_str(products[i*4+j].name)) 
+                button.setStyleSheet("background-color: qradialgradient(cx:0.8, cy:0.8,"
+                                    "fx:0.8,fy:0.8,radius:1,"
+                                    "stop:0 white, stop:1 #003366);"
+                                    "border-style: outset;"
+                                    "border-width: 3px;"
+                                    "border-radius: 10px;"
+                                    "border-color: gray;"
+                                    "padding: 6px;"
+                                    "color:black;"
+                                    "font-weight : bold;"
+                                    "font-size:10px;")
                 button.setFixedWidth(100)
                 button.setFixedHeight(100)
                 button.clicked.connect(lambda _, product=products[i*4+j]: self.page_product(product,products)) 
@@ -547,7 +657,7 @@ class RegistrationForm(QWidget):
     def page_product(self,product,products):
 
         #set back button to go page products
-        self.back.setGeometry(800,25,75,25)
+        self.back.setGeometry(750,35,100,35)
         self.back.clicked.connect(lambda x : self.show_page(products))
         
         #set photo product at page product
@@ -580,15 +690,15 @@ class RegistrationForm(QWidget):
         #set button price product
         self.label_price.setGeometry(600,550,300,25)
 
-        self.digikala.setGeometry(600,600,300,25)
+        self.digikala.setGeometry(600,600,300,30)
         self.digikala.clicked.connect(lambda x :self.open_site(product.link)) #set url site
         self.digikala.setText(fr"Digikala : {product.price}") #set price
 
-        self.divar.setGeometry(600,650,300,25)
+        self.divar.setGeometry(600,650,300,30)
         self.divar.clicked.connect(lambda x :self.open_site()) #set url site
         self.divar.setText(fr"Divar : ")  #set price
 
-        self.torob.setGeometry(600,700,300,25)
+        self.torob.setGeometry(600,700,300,30)
         self.torob.clicked.connect(lambda x :self.open_site()) #set url site
         self.torob.setText(fr"Torob : ")  #set price
         
