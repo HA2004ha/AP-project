@@ -1,9 +1,11 @@
+from threading import Thread
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from time import sleep
 from collections import OrderedDict
 from dgkala_data_getter import get_features
+
 arabic_to_latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹.", "0123456789.")
 
 class Product:
@@ -82,46 +84,75 @@ class Product:
     def features_setter(self):    # Gets features using previous module
         self._features = get_features(self._link)
 
+class Main:
+    def __init__(self):
+        # Initiating driver
+        self.browser = webdriver.Chrome('chromedriver.exe')
+        # A list of product items
+        self.items = []
 
-def main(search_word = 'آیفون 13 پرو'):
-    browser = webdriver.Chrome('chromedriver.exe')
-
-    search_word = search_word.replace(' ', '%20')
-    url = 'https://www.digikala.com/search/?q=' + search_word
-
-    browser.get(url)
-    sleep(5)
-
-    # A list of product items
-    items = []
-    i = 1
-    while True:
-        # Loop until a problem occurs while getting data from dgkala
-        try:
-            # Getting name
-            item_name = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')
-            # Getting price
-            item_price = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[4]/div[1]/div/span')
-            # Getting stars, if there is no such tag, the stars value is set to 0
+    def get_item_data(self, i):
+        cnt = 0
+        while True:
             try:
-                item_stars = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[3]/div[2]/p')
+                if cnt > 10:
+                    break
+                # Getting name
+                item_name = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')
+                # Getting price
+                try:
+                    item_price = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[4]/div[1]/div/span')
+                except:
+                    item_price = '0'
+                # Getting stars, if there is no such tag, the stars value is set to 0
+                try:
+                    item_stars = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[3]/div[2]/p')
+                except:
+                    item_stars = 0
+                # Getting href attrib of product div tag
+                item = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
+
+                # Appending item to the list
+                self.items.append(Product(item_name.text, item_price.text, item_stars.text, item.get_attribute('href')))
+                break    # Breaking while loop if succeeded
+
             except:
-                item_stars = 0
-            # Getting href attrib of product div tag
-            item = browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
+                for j in range(5):
+                    self.browser.find_element(By.TAG_NAME, "body").send_keys(Keys.DOWN)
+                sleep(0.2)
+                cnt += 1
 
-            # Appending item to the list
-            items.append(Product(item_name.text, item_price.text, item_stars.text, item.get_attribute('href')))
+    def main(self, search_word = 'آیفون 13 پرو'):
+        search_word = search_word.replace(' ', '%20')
+        url = 'https://www.digikala.com/search/?q=' + search_word
 
-            i += 1
+        self.browser.get(url)
+        sleep(5)
 
-        except:
-            break
+        i = 1
+        t_ls = []
+        while True:
+            # Loop until a problem occurs while getting data from dgkala
+            try:
+                t = Thread(target=lambda: self.get_item_data(i))
+                t.start()
+                t_ls.append(t)
+                # self.get_item_data(i)
 
-        if len(items) >= 10:
-            break
+                i += 1
 
-    return items
+            except:
+                break
+            
+            print('i: ', i)
+            if i >= 10:
+                break
+
+        for thrd in t_ls:
+            thrd.join()
+
+        return self.items
 
 if __name__ == '__main__':
-    print(main(search_word = 'آیفون 13 پرو'))
+    system = Main()
+    print(system.main(search_word = 'آیفون 13 پرو'))
