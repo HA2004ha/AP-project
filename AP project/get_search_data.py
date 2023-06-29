@@ -1,4 +1,5 @@
 from threading import Thread
+import requests
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -7,6 +8,7 @@ from collections import OrderedDict
 from dgkala_data_getter import get_features
 
 arabic_to_latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹.", "0123456789.")
+illegal_chars = str.maketrans("#<>$+%!*`&'|{}?=:/\@", "--------------------")
 
 class Product:
     """
@@ -22,11 +24,12 @@ class Product:
     Usage:
         >>> p1 = Product("آیفون 12 | iPhone 12", "۴۵,۵۰۰,۰۰۰", "۴.۵", "https://www.example.com/iphone12")
     """
-    def __init__(self, name, price, stars, link):
+    def __init__(self, name, price, stars, img_address, link):
         self._name:str = None
         self._current_price:int = None
         self._stars:float = None
         self._unavailable:bool = False
+        self._img_address = None
         self._link = None
         self._features:OrderedDict = None
         self.name = name
@@ -70,6 +73,16 @@ class Product:
             self._stars = float(manipulated_stars)
     
     @property
+    def img_address(self):
+        return self._img_address
+    
+    @img_address.setter
+    def img_address(self, img_adrs):
+        if img_adrs != 'image unavailable':
+            self._img_address = img_adrs
+
+
+    @property
     def link(self):
         return self._link
     
@@ -95,25 +108,43 @@ class Main:
         cnt = 0
         while True:
             try:
-                if cnt > 10:
+                if cnt > 10:    # Breaking loop, if it took too much time
                     break
+                
                 # Getting name
                 item_name = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')
+                
                 # Getting price
                 try:
                     item_price = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[4]/div[1]/div/span')
                 except:
                     item_price = '0'
+                
                 # Getting stars, if there is no such tag, the stars value is set to 0
                 try:
                     item_stars = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[3]/div[2]/p')
                 except:
                     item_stars = 0
+                
                 # Getting href attrib of product div tag
                 item = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
 
+                # Getting item image
+                try:
+                    # img_url = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').get_attribute('data-src')
+                    # img_bytes = requests.get(img_url).content
+                    # img_file = open(f'dgkala_scrape_photos\\{item_name.text.translate(illegal_chars)}.jpg', "wb")
+                    # img_file.write(img_bytes)
+                    # img_file.close()
+                    # with open(f'dgkala_scrape_photos\\item{i}.png', "wb") as f:
+                    #     f.write(self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').screenshot_as_png)
+                    # item_image = f'dgkala_scrape_photos\\{item_name.text.translate(illegal_chars)}'
+                    item_image = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').get_attribute('data-src')
+                except:
+                    item_image = 'image unavailable'
+
                 # Appending item to the list
-                self.items.append(Product(item_name.text, item_price.text, item_stars.text, item.get_attribute('href')))
+                self.items.append(Product(item_name.text, item_price.text, item_stars.text, item_image, item.get_attribute('href')))
                 break    # Breaking while loop if succeeded
 
             except:
