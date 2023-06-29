@@ -69,6 +69,7 @@ class RegistrationForm(QWidget):
         #object for home gui
         self.search_field=QLineEdit(self)
         self.search=QPushButton('Search',self)
+        self.search.clicked.connect(lambda x :self.searching(self.search_field.text()))
         self.log_out=QPushButton("Log Out",self)
         self.all_product_btn = QPushButton("All Products",self)
         self.mobiles_btn = QPushButton("Mobile",self)
@@ -462,15 +463,26 @@ class RegistrationForm(QWidget):
         #creat search box for searching amoung product
         self.search_field.setGeometry(350,50,200,25)
         self.search.setGeometry(575,50,75,25)
+        self.list_products_for_search=products
 
         #creat home button to go home page 
         self.home.setGeometry(900,25,75,25)
         self.home.clicked.connect(self.show_home)
-        
+
         self.show_page(products)
+
+    def searching(self,name):
+
+        result=[]
+        for product in self.list_products_for_search:
+            if name.lower() in product.name.lower() :
+                result.append(product)
+        self.search_field.clear()
+        self.show_page(result)
 
     #creat grid for name products and set on a layout     
     def creat_grid(self,products):
+
         #at the first clear grid (when click back button last grid is full  and its problem )
         for i in reversed(range(self.grid.count())):
             widget = self.grid.itemAt(i).widget()
