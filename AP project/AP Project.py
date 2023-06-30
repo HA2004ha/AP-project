@@ -755,8 +755,9 @@ if __name__ == '__main__':
     with open('last_time.json', 'r') as l:
         last_time = json.load(l)
 
-    if time.time() - last_time["time"]> 86400:
-        mobile_lst=main(search_word = 'آیفون 13 پرو')
+    if time.time() - last_time["time"]> 1:
+        system = Main()
+        mobile_lst=system.main(search_word = 'آیفون 13 پرو')
         headset_lst=[]
         tv_lst=[]
         tablet_lst=[]
