@@ -24,17 +24,18 @@ class Product:
     Usage:
         >>> p1 = Product("آیفون 12 | iPhone 12", "۴۵,۵۰۰,۰۰۰", "۴.۵", "https://www.example.com/iphone12")
     """
-    def __init__(self, name, price, stars, img_address, link):
+    def __init__(self, name, price, img_address, link):
         self._name:str = None
         self._current_price:int = None
-        self._stars:float = None
+        # self._stars:float = None
         self._unavailable:bool = False
         self._img_address = None
         self._link = None
         self._features:OrderedDict = None
         self.name = name
         self.price = price
-        self.stars = stars
+        # self.stars = stars
+        self.img_address = img_address
         self.link = link
         self.features_setter()
 
@@ -60,17 +61,17 @@ class Product:
             manipulated_price = price.replace(',', '').translate(arabic_to_latin)
             self._current_price = int(manipulated_price)
 
-    @property
-    def stars(self):
-        return self._stars
+    # @property
+    # def stars(self):
+    #     return self._stars
     
-    @stars.setter
-    def stars(self, stars:str):
-        if stars == 0:
-            pass
-        else:
-            manipulated_stars = stars.translate(arabic_to_latin)
-            self._stars = float(manipulated_stars)
+    # @stars.setter
+    # def stars(self, stars:str):
+    #     if stars == 0:
+    #         pass
+    #     else:
+    #         manipulated_stars = stars.translate(arabic_to_latin)
+    #         self._stars = float(manipulated_stars)
     
     @property
     def img_address(self):
@@ -121,10 +122,11 @@ class Main:
                     item_price = '0'
                 
                 # Getting stars, if there is no such tag, the stars value is set to 0
-                try:
-                    item_stars = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[3]/div[2]/p')
-                except:
-                    item_stars = 0
+                # UPDATE: Stars removed, because of DIVAR which has no star option
+                # try:
+                #     item_stars = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[3]/div[2]/p')
+                # except:
+                #     item_stars = 0
                 
                 # Getting href attrib of product div tag
                 item = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
@@ -144,7 +146,7 @@ class Main:
                     item_image = 'image unavailable'
 
                 # Appending item to the list
-                self.items.append(Product(item_name.text, item_price.text, item_stars.text, item_image, item.get_attribute('href')))
+                self.items.append(Product(item_name.text, item_price.text, item_image, item.get_attribute('href')))
                 break    # Breaking while loop if succeeded
 
             except:
