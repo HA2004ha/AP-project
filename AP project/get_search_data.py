@@ -24,20 +24,23 @@ class Product:
     Usage:
         >>> p1 = Product("آیفون 12 | iPhone 12", "۴۵,۵۰۰,۰۰۰", "۴.۵", "https://www.example.com/iphone12")
     """
-    def __init__(self, name, price, img_address, link):
+    def __init__(self, name, link):
+        print(f'Building object named: {name}')
         self._name:str = None
         self._current_price:int = None
         # self._stars:float = None
         self._unavailable:bool = False
         self._img_address = None
+        self._img_dir = None
         self._link = None
         self._features:OrderedDict = None
         self.name = name
-        self.price = price
         # self.stars = stars
-        self.img_address = img_address
         self.link = link
         self.features_setter()
+        self.price_setter()
+        self.img_address_setter()
+
 
 
     @property
@@ -47,41 +50,6 @@ class Product:
     @name.setter
     def name(self, name):
         self._name = name
-
-    @property
-    def price(self):
-        return self._current_price
-    
-    @price.setter
-    def price(self, price:str):
-        if price == 'ناموجود':
-            self._unavailable = True
-            self._current_price = 0
-        else:    # Translates arabic digits to latino and removes ',' seperator
-            manipulated_price = price.replace(',', '').translate(arabic_to_latin)
-            self._current_price = int(manipulated_price)
-
-    # @property
-    # def stars(self):
-    #     return self._stars
-    
-    # @stars.setter
-    # def stars(self, stars:str):
-    #     if stars == 0:
-    #         pass
-    #     else:
-    #         manipulated_stars = stars.translate(arabic_to_latin)
-    #         self._stars = float(manipulated_stars)
-    
-    @property
-    def img_address(self):
-        return self._img_address
-    
-    @img_address.setter
-    def img_address(self, img_adrs):
-        if img_adrs != 'image unavailable':
-            self._img_address = img_adrs
-
 
     @property
     def link(self):
@@ -96,7 +64,33 @@ class Product:
         return self._features
     
     def features_setter(self):    # Gets features using previous module
-        self._features = get_features(self._link)
+        self._features = get_features(self.name, self._link)
+
+    @property
+    def price(self):
+        return self._current_price
+    
+    def price_setter(self):
+        if type(self._features['price']) == str:
+            price = self._features['price']
+        else:
+            price = self._features['price'].text
+
+        if price == 'ناموجود':
+            self._unavailable = True
+            self._current_price = 0
+        else:    # Translates arabic digits to latino and removes ',' seperator
+            manipulated_price = price.replace(',', '').translate(arabic_to_latin)
+            self._current_price = int(manipulated_price)
+
+    @property
+    def img_address(self):
+        return self._img_address
+    
+    def img_address_setter(self):
+        if self._features['img_adrs'] != 'image unavailable':
+            self._img_address = self._features['img_adrs']    
+            self._img_dir = f'images\\{self.name}'
 
 class Main:
     def __init__(self):
@@ -109,47 +103,50 @@ class Main:
         cnt = 0
         while True:
             try:
-                if cnt > 10:    # Breaking loop, if it took too much time
+                if cnt > 2:    # Breaking loop, if it took too much time
                     break
                 
                 # Getting name
                 item_name = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')
                 
-                # Getting price
-                try:
-                    item_price = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[4]/div[1]/div/span')
-                except:
-                    item_price = '0'
+                """# Getting price - UPDATE: The price option is now set by data_getter module.
+                # try:
+                #     item_price = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[4]/div[1]/div/span')
+                # except:
+                #     item_price = '0'
                 
                 # Getting stars, if there is no such tag, the stars value is set to 0
                 # UPDATE: Stars removed, because of DIVAR which has no star option
                 # try:
                 #     item_stars = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[3]/div[2]/p')
                 # except:
-                #     item_stars = 0
+                #     item_stars = 0"""
                 
                 # Getting href attrib of product div tag
                 item = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
 
-                # Getting item image
-                try:
-                    # img_url = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').get_attribute('data-src')
-                    # img_bytes = requests.get(img_url).content
-                    # img_file = open(f'dgkala_scrape_photos\\{item_name.text.translate(illegal_chars)}.jpg', "wb")
-                    # img_file.write(img_bytes)
-                    # img_file.close()
-                    # with open(f'dgkala_scrape_photos\\item{i}.png', "wb") as f:
-                    #     f.write(self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').screenshot_as_png)
-                    # item_image = f'dgkala_scrape_photos\\{item_name.text.translate(illegal_chars)}'
-                    item_image = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').get_attribute('data-src')
-                except:
-                    item_image = 'image unavailable'
+                """# Getting item image - UPDATE: The image link will be reachable in data_getter module.
+                # try:
+                #     # img_url = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').get_attribute('data-src')
+                #     # img_bytes = requests.get(img_url).content
+                #     # img_file = open(f'dgkala_scrape_photos\\{item_name.text.translate(illegal_chars)}.jpg', "wb")
+                #     # img_file.write(img_bytes)
+                #     # img_file.close()
+                #     # with open(f'dgkala_scrape_photos\\item{i}.png', "wb") as f:
+                #     #     f.write(self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').screenshot_as_png)
+                #     # item_image = f'dgkala_scrape_photos\\{item_name.text.translate(illegal_chars)}'
+                #     item_image = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div/div[1]/div/picture/img').get_attribute('src')
+                # except Exception as excp:
+                #     item_image = 'image unavailable'
+                #     print(f'Image download operation failed beacause of {excp}')"""
 
                 # Appending item to the list
-                self.items.append(Product(item_name.text, item_price.text, item_image, item.get_attribute('href')))
+                self.items.append(Product(item_name.text, item.get_attribute('href')))
+    
                 break    # Breaking while loop if succeeded
 
-            except:
+            except Exception as excp:
+                print(f'FAILEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD: {excp}')
                 for j in range(5):
                     self.browser.find_element(By.TAG_NAME, "body").send_keys(Keys.DOWN)
                 sleep(0.2)
@@ -162,12 +159,13 @@ class Main:
         self.browser.get(url)
         sleep(5)
 
+        number_of_items = 10
         i = 1
         t_ls = []
         while True:
             # Loop until a problem occurs while getting data from dgkala
             try:
-                t = Thread(target=lambda: self.get_item_data(i))
+                t = Thread(target=self.get_item_data, args=[i])
                 t.start()
                 t_ls.append(t)
                 # self.get_item_data(i)
@@ -175,10 +173,12 @@ class Main:
                 i += 1
 
             except:
+                print(f'Failed on item: {i}')
+                number_of_items += 1
                 break
             
             print('i: ', i)
-            if i >= 10:
+            if i > number_of_items:
                 break
 
         for thrd in t_ls:
@@ -188,4 +188,6 @@ class Main:
 
 if __name__ == '__main__':
     system = Main()
-    print(system.main(search_word = 'آیفون 13 پرو'))
+    x = system.main(search_word = 'آیفون 13 پرو')
+    for item in x:
+        print(item.img_address, '}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}')

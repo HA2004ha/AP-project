@@ -12,7 +12,7 @@ persian_transliterate = str.maketrans("ابپتثجچحخدذرزژسشصضطظ�
 
 class Product:
     """
-    A class representing a product on digikala website.
+    A class representing a product on torob website.
 
     Attributes:
         name (str): The name of the product.
@@ -63,7 +63,7 @@ class Product:
                 self._current_price = int(manipulated_price)
             except:
                 try:
-                    manipulated_price = price.replace(' تومان', '').replace(',', '').translate(arabic_to_latin)
+                    manipulated_price = price.replace('از ', '').replace(' تومان', '').replace(',', '').translate(arabic_to_latin)
                     self._current_price = int(manipulated_price)
                 except:
                     self._current_price = price
@@ -111,23 +111,25 @@ class Main:
 
     def get_item_data(self, i):
         try:
-            item_name = self.browser.find_element(By.XPATH, f'/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[{i}]/a/article/div/div[1]/h2')
-            item_price = self.browser.find_element(By.XPATH, f'/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[{i}]/a/article/div/div[1]/div[2]')
+            item_name = self.browser.find_element(By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/h2')
+            item_price = self.browser.find_element(By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/div[3]')
             # item_image = self.browser.find_element(By.XPATH, f'/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[{i}]/a/article/div/div[3]/div/picture/img')
-            item = self.browser.find_element(By.XPATH, f'/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[{i}]/a')
+            item = self.browser.find_element(By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a')
             self.items[item_name.text] = Product(item_name.text, item_price.text, item.get_attribute('href'))
+            print(f'Found and added item {i}\n################################################################################')
 
         except Exception as expt:
-            print(f'Failed on item {i}, because of {expt}')
+            print(f'Failed on item {i}, because of {expt} \n_____________________________________________________________________________')
 
-    def main(self, search_word = 'آیفون 13 پرو'):
+    def main(self, search_word = 'گوشی اپل iPhone 13 Pro (Active) | حافظه 256 گیگابایت ا Apple iPhone 13 Pro (Active) 256 GB'):
         manipulated_search_word = search_word.replace(' ', '%20')
         transliterated_search_word = search_word.translate(persian_transliterate)
         t = Translator()
         translated_to_en_word = t.translate(search_word, src='fa', dest='en').text
         translated_to_fa_word = t.translate(search_word, src='en', dest='fa').text
         # print(translated_to_en_word, '??????????????????????????????')
-        url = 'https://divar.ir/s/tehran/mobile-phones?goods-business-type=all&q=' + manipulated_search_word
+        
+        url = 'https://torob.com/search/?query=' + manipulated_search_word
 
         self.browser.get(url)
         sleep(5)
@@ -166,4 +168,4 @@ class Main:
 
 if __name__ == '__main__':
     system = Main()
-    print(system.main())
+    print(system.main().name)

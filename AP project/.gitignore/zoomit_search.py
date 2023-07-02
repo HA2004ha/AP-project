@@ -4,11 +4,9 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from time import sleep
-from googletrans import Translator
-import Levenshtein
+from collections import OrderedDict
 
 arabic_to_latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹.", "0123456789.")
-persian_transliterate = str.maketrans("ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی", "abptsjchkdzrzjsssztzaqfqkglmnvhy")
 
 class Product:
     """
@@ -24,18 +22,18 @@ class Product:
     Usage:
         >>> p1 = Product("آیفون 12 | iPhone 12", "۴۵,۵۰۰,۰۰۰", "۴.۵", "https://www.example.com/iphone12")
     """
-    def __init__(self, name, price, link):
+    def __init__(self, name, price, img_address, link):
         self._name:str = None
         self._current_price:int = None
         # self._stars:float = None
         self._unavailable:bool = False
-        # self._img_address = None
+        self._img_address = None
         self._link = None
         # self._features:OrderedDict = None
         self.name = name
         self.price = price
         # self.stars = stars
-        # self.img_address = img_address
+        self.img_address = img_address
         self.link = link
         # self.features_setter()
 
@@ -80,14 +78,14 @@ class Product:
     #         manipulated_stars = stars.translate(arabic_to_latin)
     #         self._stars = float(manipulated_stars)
     
-    # @property
-    # def img_address(self):
-    #     return self._img_address
+    @property
+    def img_address(self):
+        return self._img_address
     
-    # @img_address.setter
-    # def img_address(self, img_adrs):
-    #     if img_adrs != 'image unavailable':
-    #         self._img_address = img_adrs
+    @img_address.setter
+    def img_address(self, img_adrs):
+        if img_adrs != 'image unavailable':
+            self._img_address = img_adrs
 
     @property
     def link(self):
@@ -107,27 +105,34 @@ class Product:
 class Main:
     def __init__(self):
         self.browser = webdriver.Chrome('chromedriver.exe')
-        self.items = {}
+        self.items = []
 
     def get_item_data(self, i):
         try:
-            item_name = self.browser.find_element(By.XPATH, f'/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[{i}]/a/article/div/div[1]/h2')
-            item_price = self.browser.find_element(By.XPATH, f'/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[{i}]/a/article/div/div[1]/div[2]')
-            # item_image = self.browser.find_element(By.XPATH, f'/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[{i}]/a/article/div/div[3]/div/picture/img')
-            item = self.browser.find_element(By.XPATH, f'/html/body/div[1]/div[2]/main/div[2]/div/div/div/div[{i}]/a')
-            self.items[item_name.text] = Product(item_name.text, item_price.text, item.get_attribute('href'))
+            try:    
+                item_name = self.browser.find_element(By.XPATH, f'//*[@id="inRow"]/div/div/div[{2 * i}]/div[2]/div[1]/a/span')
+            except:
+                print('name reed')
+            try:
+                item_price = self.browser.find_element(By.XPATH, f'/html/body/div[2]/div[7]/div[3]/div[2]/div[1]/div/div/div/div[{2 * i}]/div[3]/div/div[1]/div/span[1]')
+            except:
+                item_price = 'ناموجود'
+                print('price reed')
+            try:
+                item_image = self.browser.find_element(By.XPATH, f'/html/body/div[2]/div[7]/div[3]/div[2]/div[1]/div/div/div/div[{2 * i}]/div[1]/a/img')
+            except:
+                print('image reed')
+            try:
+                item = self.browser.find_element(By.XPATH, f'/html/body/div[2]/div[7]/div[3]/div[2]/div[1]/div/div/div/div[{2 * i}]/div[2]/div[1]/a')
+            except:
+                print('link reed')
+            self.items.append(Product(item_name.text, item_price.text, item_image.get_attribute('src'), item.get_attribute('href')))
 
-        except Exception as expt:
-            print(f'Failed on item {i}, because of {expt}')
+        except:
+            print(f'Failed on item {i}')
 
-    def main(self, search_word = 'آیفون 13 پرو'):
-        manipulated_search_word = search_word.replace(' ', '%20')
-        transliterated_search_word = search_word.translate(persian_transliterate)
-        t = Translator()
-        translated_to_en_word = t.translate(search_word, src='fa', dest='en').text
-        translated_to_fa_word = t.translate(search_word, src='en', dest='fa').text
-        # print(translated_to_en_word, '??????????????????????????????')
-        url = 'https://divar.ir/s/tehran/mobile-phones?goods-business-type=all&q=' + manipulated_search_word
+    def main(self):
+        url = 'https://www.zoomit.ir/product/list/mobile/#'
 
         self.browser.get(url)
         sleep(5)
@@ -145,23 +150,7 @@ class Main:
         for thrd in t_ls:
             thrd.join()
 
-        result_dic = {}
-
-        min_original = min(self.items.keys(), key=lambda wrd: Levenshtein.distance(wrd, search_word))
-        result_dic[Levenshtein.distance(min_original, search_word)] = min_original
-
-        min_transliterated = min(self.items.keys(), key=lambda wrd: Levenshtein.distance(wrd, transliterated_search_word))
-        result_dic[Levenshtein.distance(min_transliterated, transliterated_search_word)] = min_transliterated
-        
-        min_translated_to_en = min(self.items.keys(), key=lambda wrd: Levenshtein.distance(wrd, translated_to_en_word))
-        result_dic[Levenshtein.distance(min_translated_to_en, translated_to_en_word)] = min_transliterated
-
-        min_translated_to_fa = min(self.items.keys(), key=lambda wrd: Levenshtein.distance(wrd, translated_to_fa_word))
-        result_dic[Levenshtein.distance(min_translated_to_fa, translated_to_fa_word)] = min_transliterated        
-
-        print(result_dic)
-
-        return self.items[result_dic[min(result_dic.keys())]]
+        return self.items
 
 
 if __name__ == '__main__':
