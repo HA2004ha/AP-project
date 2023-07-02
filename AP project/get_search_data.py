@@ -41,8 +41,6 @@ class Product:
         self.price_setter()
         self.img_address_setter()
 
-
-
     @property
     def name(self):
         return self._name
@@ -125,28 +123,12 @@ class Main:
                 # Getting href attrib of product div tag
                 item = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
 
-                """# Getting item image - UPDATE: The image link will be reachable in data_getter module.
-                # try:
-                #     # img_url = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').get_attribute('data-src')
-                #     # img_bytes = requests.get(img_url).content
-                #     # img_file = open(f'dgkala_scrape_photos\\{item_name.text.translate(illegal_chars)}.jpg', "wb")
-                #     # img_file.write(img_bytes)
-                #     # img_file.close()
-                #     # with open(f'dgkala_scrape_photos\\item{i}.png', "wb") as f:
-                #     #     f.write(self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div[1]/div/picture/img').screenshot_as_png)
-                #     # item_image = f'dgkala_scrape_photos\\{item_name.text.translate(illegal_chars)}'
-                #     item_image = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[1]/div/div/div[1]/div/picture/img').get_attribute('src')
-                # except Exception as excp:
-                #     item_image = 'image unavailable'
-                #     print(f'Image download operation failed beacause of {excp}')"""
-
                 # Appending item to the list
                 self.items.append(Product(item_name.text, item.get_attribute('href')))
     
                 break    # Breaking while loop if succeeded
 
             except Exception as excp:
-                print(f'FAILEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD: {excp}')
                 for j in range(5):
                     self.browser.find_element(By.TAG_NAME, "body").send_keys(Keys.DOWN)
                 sleep(0.2)
@@ -168,7 +150,6 @@ class Main:
                 t = Thread(target=self.get_item_data, args=[i])
                 t.start()
                 t_ls.append(t)
-                # self.get_item_data(i)
 
                 i += 1
 
@@ -190,4 +171,4 @@ if __name__ == '__main__':
     system = Main()
     x = system.main(search_word = 'آیفون 13 پرو')
     for item in x:
-        print(item.img_address, '}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}')
+        print(item.img_address)

@@ -74,7 +74,7 @@ def get_features(name, url = 'https://www.digikala.com/product/dkp-8366616/%DA%A
             img_file.write(img_bytes)
             img_file.close()
         except Exception as excp:
-            print(f'THE EXCEPTION ISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: {excp}')
+            pass
 
     except:
         prod_features['img_adrs'] = 'image unavailable'
