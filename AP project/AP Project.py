@@ -661,21 +661,23 @@ class RegistrationForm(QWidget):
         self.back.clicked.connect(lambda x : self.show_page(products))
         
         #set photo product at page product
-        image=Image.open("iphon.webp") #set name photo product , just example
+        image=Image.open(product._img_dir) #set name photo product , just example
         new_size=(300,300)
         resize_image=image.resize(new_size)
-        resize_image.save("iphon.webp") #set name photo product , just example
-        self.product_picture = QPixmap("iphon.webp") #set name photo product , just example
+        resize_image.save(product._img_dir) #set name photo product , just example
+        self.product_picture = QPixmap(product._img_dir) #set name photo product , just example
         self.label_picture.setPixmap(self.product_picture)
         self.label_picture.setGeometry(600,100,300,300)
 
         #number detail product
-        list_detail=[["Name",product.name],["Starts",str(product.stars)]]
+        list_detail=[]
+        for item in product.features:
+            list_detail.append([item,product.features[item]])
 
         self.table.setRowCount(10)
         self.table.setColumnCount(2)
 
-        for row in range(2):
+        for row in range(10):
             for column in range(2):
                 item = QTableWidgetItem(list_detail[row][column])
                 item.setTextAlignment(Qt.AlignCenter) #set detail product
@@ -756,19 +758,23 @@ if __name__ == '__main__':
         last_time = json.load(l)
 
     if time.time() - last_time["time"]> 1:
-        system = Main()
-        mobile_lst=system.main(search_word = 'آیفون 13 پرو')
-        headset_lst=[]
-        tv_lst=[]
-        tablet_lst=[]
-        laptop_lst=[]
-
-        with shelve.open('data_products') as db:
+        system1 = Main()
+        system2 = Main()
+        system3 = Main()
+        system4 = Main()
+        system5 = Main()
+        mobile_lst=system1.main(search_word = "category-mobile-phone/product-list")
+        headset_lst=system2.main(search_word = "category-headphone")
+        tv_lst=system3.main(search_word = "category-tv2")
+        tablet_lst=system4.main(search_word = "category-tablet")
+        laptop_lst=system5.main(search_word = "notebook-netbook-ultrabook")
+        
+        '''with shelve.open('data_products') as db:
             db['mobile_lst']=mobile_lst
             db['headset_lst']=headset_lst
             db['tv_lst']=tv_lst
             db['tablet_lst']=tablet_lst
-            db['laptop_lst']=laptop_lst
+            db['laptop_lst']=laptop_lst'''
 
         last_time["time"]=time.time()
         with open('last_time.json', 'w') as l:

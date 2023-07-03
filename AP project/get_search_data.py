@@ -141,7 +141,7 @@ class Main:
         self.browser.get(url)
         sleep(5)
 
-        number_of_items = 10
+        number_of_items = 1
         i = 1
         t_ls = []
         while True:
@@ -169,4 +169,4 @@ class Main:
 
 if __name__ == '__main__':
     system = Main()
-    print(system.main(search_word = 'آیفون 13 پرو'))
+    print(system.main(search_word = 'category-mobile-phone/product-list')[0]._img_dir)
