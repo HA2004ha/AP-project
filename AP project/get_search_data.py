@@ -169,6 +169,4 @@ class Main:
 
 if __name__ == '__main__':
     system = Main()
-    x = system.main(search_word = 'آیفون 13 پرو')
-    for item in x:
-        print(item.img_address)
+    print(system.main(search_word = 'آیفون 13 پرو'))
