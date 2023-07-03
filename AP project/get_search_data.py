@@ -6,9 +6,35 @@ from selenium.webdriver.common.by import By
 from time import sleep
 from collections import OrderedDict
 from dgkala_data_getter import get_features
+from divar_search import Main as DIVARMAIN
 
 arabic_to_latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹.", "0123456789.")
 illegal_chars = str.maketrans("#<>$+%!*`&'|{}?=:/\@", "--------------------")
+
+class SimilarProduct:
+    def __init__(self, name):
+        self._name = None
+  
+        self._divar_name = None
+        self._divar_price = None
+        self._divar_link = None
+
+        self._torob_name = None
+        self._torob_price = None
+        self._torob_link = None
+
+        self._zoomit_name = None
+        self._zoomit_price = None
+        self._zoomit_link = None
+        pass
+
+    def setter(self, name):
+        divar_obj = DIVARMAIN()
+        divar_product = divar_obj.main(name)
+        self._divar_name = divar_product.name
+        self._divar_price = divar_product.price
+        self._divar_link = divar_product.link
+        print(self._divar_name, self._divar_price, self._divar_link, '***************************')
 
 class Product:
     """
@@ -106,19 +132,6 @@ class Main:
                 
                 # Getting name
                 item_name = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')
-                
-                """# Getting price - UPDATE: The price option is now set by data_getter module.
-                # try:
-                #     item_price = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[4]/div[1]/div/span')
-                # except:
-                #     item_price = '0'
-                
-                # Getting stars, if there is no such tag, the stars value is set to 0
-                # UPDATE: Stars removed, because of DIVAR which has no star option
-                # try:
-                #     item_stars = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[3]/div[2]/p')
-                # except:
-                #     item_stars = 0"""
                 
                 # Getting href attrib of product div tag
                 item = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
