@@ -9,6 +9,32 @@ from PyQt5.QtWidgets import *
 import webbrowser
 from get_search_data import *
 import shelve
+import pickle
+
+def encode_dict(dictionary):
+    encoded_dict = {}
+    for key, value in dictionary.items():
+        encoded_key = ""
+        for char in key:
+            encoded_key += chr(ord(char) + 1)
+        encoded_value = ""
+        for char in value:
+            encoded_value += chr(ord(char) + 1)
+        encoded_dict[encoded_key] = encoded_value
+    return encoded_dict
+
+
+def decode_dict(encoded_dictionary):
+    decoded_dict = {}
+    for key, value in encoded_dictionary.items():
+        decoded_key = ""
+        for char in key:
+            decoded_key += chr(ord(char) - 1)
+        decoded_value = ""
+        for char in value:
+            decoded_value += chr(ord(char) - 1)
+        decoded_dict[decoded_key] = decoded_value
+    return decoded_dict
 
 def break_str(string):
     new_string = ""
@@ -280,7 +306,7 @@ class RegistrationForm(QWidget):
         try:
             with open('users.json', 'r') as f:
                 data = json.load(f)
-
+                data=decode_dict(data)
                 if data[username] == password:
 
                     self.username=username #save username for add list favorite json file
@@ -406,7 +432,7 @@ class RegistrationForm(QWidget):
         #set or error sin up user
         with open('users.json', 'r') as f: #creat or open json file for save data
             data = json.load(f)
-
+            data = decode_dict(data)
         if username in data or len(username)==0:
             self.username_field_sign_up.setStyleSheet("border : 2px solid  red;")
             self.error_sign_up.setText("Username already exists or Less than 1 character!")
@@ -434,7 +460,7 @@ class RegistrationForm(QWidget):
 
                     data[username] = password
                     with open('users.json', 'w') as f:
-                        json.dump(data, f)
+                        json.dump(encode_dict(data), f)
 
                     with shelve.open('my_data_favorites') as db:
                         db[username] = []
@@ -768,13 +794,13 @@ if __name__ == '__main__':
         tv_lst=system3.main(search_word = "category-tv2")
         tablet_lst=system4.main(search_word = "category-tablet")
         laptop_lst=system5.main(search_word = "notebook-netbook-ultrabook")
-        
-        '''with shelve.open('data_products') as db:
+        with shelve.open('data_products') as db:
+            
             db['mobile_lst']=mobile_lst
             db['headset_lst']=headset_lst
             db['tv_lst']=tv_lst
             db['tablet_lst']=tablet_lst
-            db['laptop_lst']=laptop_lst'''
+            db['laptop_lst']=laptop_lst
 
         last_time["time"]=time.time()
         with open('last_time.json', 'w') as l:
