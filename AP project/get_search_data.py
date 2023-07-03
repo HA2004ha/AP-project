@@ -136,7 +136,7 @@ class Main:
 
     def main(self, search_word = 'آیفون 13 پرو'):
         search_word = search_word.replace(' ', '%20')
-        url = 'https://www.digikala.com/search/?q=' + search_word
+        url = 'https://www.digikala.com/search/' + search_word
 
         self.browser.get(url)
         sleep(5)
