@@ -32,7 +32,7 @@ def search_system(items_name_list, search_word):
     min_translated_to_fa = min(items_name_list, key=lambda wrd: Levenshtein.distance(wrd, translated_to_fa_word))
     result_dic[Levenshtein.distance(min_translated_to_fa, translated_to_fa_word)] = min_transliterated        
 
-    return(result_dic)
+    return (result_dic[min(result_dic)])
 
 class Product:
     """

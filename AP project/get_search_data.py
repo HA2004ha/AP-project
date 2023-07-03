@@ -26,15 +26,20 @@ class SimilarProduct:
         self._zoomit_name = None
         self._zoomit_price = None
         self._zoomit_link = None
+        
+        self.setter(name)
         pass
 
     def setter(self, name):
-        divar_obj = DIVARMAIN()
-        divar_product = divar_obj.main(name)
-        self._divar_name = divar_product.name
-        self._divar_price = divar_product.price
-        self._divar_link = divar_product.link
-        print(self._divar_name, self._divar_price, self._divar_link, '***************************')
+        try:
+            divar_obj = DIVARMAIN()
+            divar_product = divar_obj.main(name)
+            self._divar_name = divar_product.name
+            self._divar_price = divar_product.price
+            self._divar_link = divar_product.link
+            print(self._divar_name, self._divar_price, self._divar_link, '**************************************')
+        except:
+            pass
 
 class Product:
     """
@@ -51,21 +56,20 @@ class Product:
         >>> p1 = Product("آیفون 12 | iPhone 12", "۴۵,۵۰۰,۰۰۰", "۴.۵", "https://www.example.com/iphone12")
     """
     def __init__(self, name, link):
-        print(f'Building object named: {name}')
         self._name:str = None
         self._current_price:int = None
-        # self._stars:float = None
         self._unavailable:bool = False
         self._img_address = None
         self._img_dir = None
         self._link = None
         self._features:OrderedDict = None
+        self._similar_product:SimilarProduct = None
         self.name = name
-        # self.stars = stars
         self.link = link
         self.features_setter()
         self.price_setter()
         self.img_address_setter()
+        self.similar_product_setter()
 
     @property
     def name(self):
@@ -115,6 +119,16 @@ class Product:
         if self._features['img_adrs'] != 'image unavailable':
             self._img_address = self._features['img_adrs']    
             self._img_dir = f'images\\{self.name}'
+
+    @property
+    def similar_product(self):
+        return self._similar_product
+
+    def similar_product_setter(self):
+        try:
+            self._similar_product = SimilarProduct(self.name)
+        except Exception as excp:
+            print(f'[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]\n[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]\n[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]\n{excp}\n[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]\n[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]\n[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]\n')
 
 class Main:
     def __init__(self):
