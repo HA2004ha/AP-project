@@ -7,6 +7,8 @@ from time import sleep
 from collections import OrderedDict
 from dgkala_data_getter import get_features
 from divar_search import Main as DIVARMAIN
+from torob_search import Main as TOROBMAIN
+from zoomit_search import Main as ZOOMITMAIN
 
 arabic_to_latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹.", "0123456789.")
 illegal_chars = str.maketrans("#<>$+%!*`&'|{}?=:/\@", "--------------------")
@@ -32,14 +34,29 @@ class SimilarProduct:
 
     def setter(self, name):
         try:
+            # Get similar products from DIVAR
             divar_obj = DIVARMAIN()
             divar_product = divar_obj.main(name)
             self._divar_name = divar_product.name
             self._divar_price = divar_product.price
             self._divar_link = divar_product.link
-            print(self._divar_name, self._divar_price, self._divar_link, '**************************************')
-        except:
-            pass
+        
+            # Get similar products from TOROB
+            torob_obj = TOROBMAIN()
+            torob_product = torob_obj.main(name)
+            self._torob_name = torob_product.name
+            self._torob_price = torob_product.price
+            self._torob_link = torob_product.link
+
+            # Get similar products from TOROB
+            zoomit_obj = ZOOMITMAIN()
+            zoomit_product = zoomit_obj.main(name)
+            self._zoomit_name = zoomit_product.name
+            self._zoomit_price = zoomit_product.price
+            self._zoomit_link = zoomit_product.link
+
+        except Exception as excp:
+            print(f'ITEM {name} FAILED BECAUSE OF {excp}')
 
 class Product:
     """
