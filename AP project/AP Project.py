@@ -150,6 +150,8 @@ class RegistrationForm(QWidget):
         self.main_layout = QVBoxLayout()
 
         #object for page product gui
+        self.label_favorite = QLabel("",self)
+        self.timer = QTimer(self)
         self.back=QPushButton("Back",self)
         self.back.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
                                 "fx:0.5,fy:0.5,radius:0.6,"
@@ -684,14 +686,18 @@ class RegistrationForm(QWidget):
         #set back button to go page products
         self.back.setGeometry(750,35,100,35)
         self.back.clicked.connect(lambda x : self.show_page(products))
+
+        #set label faverite reaction
+        self.label_favorite.setGeometry(440,700,150,32)
+
         
         #set photo product at page product
         try :
-            image=Image.open('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
+            image=Image.open('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
             new_size=(300,300)
             resize_image=image.resize(new_size)
-            resize_image.save('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
-            self.product_picture = QPixmap('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
+            resize_image.save('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
+            self.product_picture = QPixmap('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
             self.label_picture.setPixmap(self.product_picture)
             self.label_picture.setGeometry(600,100,300,300)
         except:
@@ -743,8 +749,14 @@ class RegistrationForm(QWidget):
 
         if self.favorit_product in self.favorites_list:
             self.favorites_list.remove(self.favorit_product)
+            self.label_favorite.setText("Removed Successfully")
+            self.timer.timeout.connect(lambda :self.label_favorite.setText(""))
+            self.timer.start(3000)
         else:
             self.favorites_list.append(self.favorit_product)
+            self.label_favorite.setText("Added Successfully")
+            self.timer.timeout.connect(lambda :self.label_favorite.setText(""))
+            self.timer.start(3000)
              
         with shelve.open('my_data_favorites') as db:
             db[self.username] = self.favorites_list     
@@ -763,6 +775,7 @@ class RegistrationForm(QWidget):
         self.torob.hide()
         self.label_price.hide()
         self.favorit_button.hide()
+        self.label_favorite.hide()
          
     def show_page_product(self):
 
@@ -778,6 +791,7 @@ class RegistrationForm(QWidget):
         self.torob.show()
         self.label_price.show()
         self.favorit_button.show()
+        self.label_favorite.show()
     
 #--------------------------------------------------------------------------------------------  
 
