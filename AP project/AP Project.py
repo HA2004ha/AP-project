@@ -695,7 +695,6 @@ class RegistrationForm(QWidget):
             self.label_picture.setPixmap(self.product_picture)
             self.label_picture.setGeometry(600,100,300,300)
         except:
-            print('reedam')
             pass
         #number detail product
         list_detail=[]
