@@ -150,6 +150,9 @@ class RegistrationForm(QWidget):
         self.main_layout = QVBoxLayout()
 
         #object for page product gui
+        self.label_show_message = QLabel("",self)
+        self.label_show_message.setStyleSheet("font-size: 20px")
+        self.timer = QTimer(self)
         self.back=QPushButton("Back",self)
         self.back.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
                                 "fx:0.5,fy:0.5,radius:0.6,"
@@ -507,6 +510,12 @@ class RegistrationForm(QWidget):
 #-------------------------------------------------------------------------------------------- 
     
     def home_page(self):
+        #welcom...
+        self.label_show_message.show()
+        self.label_show_message.setGeometry(400,25,200,32)
+        self.label_show_message.setText("Welcome To Mini Torob")
+        self.timer.timeout.connect(lambda :self.label_show_message.setText(""))
+        self.timer.start(4000)
 
         # Add buttons products to the window
         self.all_product_btn.clicked.connect(lambda x:self.page(self.all_product_btn.text(),self.all_lst)) 
@@ -558,6 +567,7 @@ class RegistrationForm(QWidget):
         self.laptops_btn.hide()
         self.headset_btn.hide()
         self.favorites_btn.hide()
+        self.label_show_message.hide()
             
     def show_home(self):
            
@@ -573,6 +583,7 @@ class RegistrationForm(QWidget):
         self.laptops_btn.show()
         self.headset_btn.show()
         self.favorites_btn.show()
+        self.label_show_message.show()
 
 #--------------------------------------------------------------------------------------------   
   
@@ -687,11 +698,11 @@ class RegistrationForm(QWidget):
         
         #set photo product at page product
         try :
-            image=Image.open('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
+            image=Image.open('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
             new_size=(300,300)
             resize_image=image.resize(new_size)
-            resize_image.save('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
-            self.product_picture = QPixmap('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
+            resize_image.save('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
+            self.product_picture = QPixmap('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
             self.label_picture.setPixmap(self.product_picture)
             self.label_picture.setGeometry(600,100,300,300)
         except:
@@ -742,8 +753,14 @@ class RegistrationForm(QWidget):
 
         if self.favorit_product in self.favorites_list:
             self.favorites_list.remove(self.favorit_product)
+            self.label_show_message.setText("Removed Successfully")
+            self.timer.timeout.connect(lambda :self.label_show_message.setText(""))
+            self.timer.start(4000)
         else:
             self.favorites_list.append(self.favorit_product)
+            self.label_show_message.setText("Added Successfully")
+            self.timer.timeout.connect(lambda :self.label_show_message.setText(""))
+            self.timer.start(4000)
              
         with shelve.open('my_data_favorites') as db:
             db[self.username] = self.favorites_list     
@@ -762,7 +779,8 @@ class RegistrationForm(QWidget):
         self.torob.hide()
         self.label_price.hide()
         self.favorit_button.hide()
-         
+        self.label_show_message.hide()
+            
     def show_page_product(self):
 
         self.hide_page()
@@ -777,7 +795,8 @@ class RegistrationForm(QWidget):
         self.torob.show()
         self.label_price.show()
         self.favorit_button.show()
-    
+        self.label_show_message.show()
+
 #--------------------------------------------------------------------------------------------  
 
 if __name__ == '__main__':
@@ -786,7 +805,7 @@ if __name__ == '__main__':
         last_time = json.load(l)
 
     # if time.time() - last_time["time"]> 86400:
-    if time.time() - last_time["time"]> 10:
+    if time.time() - last_time["time"]> 86400:
         system1 = Main()
         system2 = Main()
         system3 = Main()
