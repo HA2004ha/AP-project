@@ -8,7 +8,7 @@ from collections import OrderedDict
 from dgkala_data_getter import get_features
 from divar_search import Main as DIVARMAIN
 from torob_search import Main as TOROBMAIN
-from zoomit_search import Main as ZOOMITMAIN
+# from zoomit_search import Main as ZOOMITMAIN
 
 arabic_to_latin = str.maketrans("۰۱۲۳۴۵۶۷۸۹.", "0123456789.")
 illegal_chars = str.maketrans("#<>$+%!*`&'|{}?=:/\@", "--------------------")
@@ -30,30 +30,87 @@ class SimilarProduct:
         self._zoomit_link = None
         
         self.setter(name)
-        pass
+
+    @property
+    def divar_name(self):
+        return self._divar_name
+    
+    @property
+    def divar_price(self):
+        return self._divar_price
+    
+    @property
+    def divar_link(self):
+        return self._divar_link
+    
+    @property
+    def torob_name(self):
+        return self._torob_name
+    
+    @property
+    def torob_price(self):
+        return self._torob_price
+    
+    @property
+    def torob_link(self):
+        return self._torob_link
+    
+    @property
+    def zoomit_name(self):
+        return self._zoomit_name
+    
+    @property
+    def zoomit_price(self):
+        return self._zoomit_price
+    
+    @property
+    def zoomit_link(self):
+        return self._zoomit_link
 
     def setter(self, name):
         try:
-            # Get similar products from DIVAR
-            divar_obj = DIVARMAIN()
-            divar_product = divar_obj.main(name)
-            self._divar_name = divar_product.name
-            self._divar_price = divar_product.price
-            self._divar_link = divar_product.link
+            def f0(self):
+                try:
+                    # Get similar products from DIVAR
+                    divar_obj = DIVARMAIN()
+                    divar_product = divar_obj.main(name)
+                    self._divar_name = divar_product.name
+                    self._divar_price = divar_product.price
+                    self._divar_link = divar_product.link
+                except:
+                    pass    # PASS, if there is no similar product in DIVAR
         
-            # Get similar products from TOROB
-            torob_obj = TOROBMAIN()
-            torob_product = torob_obj.main(name)
-            self._torob_name = torob_product.name
-            self._torob_price = torob_product.price
-            self._torob_link = torob_product.link
+            def f1(self):
+                try:
+                    # Get similar products from TOROB
+                    torob_obj = TOROBMAIN()
+                    torob_product = torob_obj.main(name)
+                    self._torob_name = torob_product.name
+                    self._torob_price = torob_product.price
+                    self._torob_link = torob_product.link
+                except:
+                    pass    # PASS, if there is no similar product in TOROB
 
-            # Get similar products from TOROB
-            zoomit_obj = ZOOMITMAIN()
-            zoomit_product = zoomit_obj.main(name)
-            self._zoomit_name = zoomit_product.name
-            self._zoomit_price = zoomit_product.price
-            self._zoomit_link = zoomit_product.link
+            # def f2(self):
+            #     try:
+            #         # Get similar products from TOROB
+            #         zoomit_obj = ZOOMITMAIN()
+            #         zoomit_product = zoomit_obj.main(name)
+            #         self._zoomit_name = zoomit_product.name
+            #         self._zoomit_price = zoomit_product.price
+            #         self._zoomit_link = zoomit_product.link
+            #     except:
+            #         pass    # PASS, if there is no similar product in DIVAR
+            
+            t0 = Thread(target=lambda:f0(self))
+            t0.start()
+            t1 = Thread(target=lambda:f1(self))
+            t1.start()
+            # t2 = Thread(target=lambda:f2(self))
+            # t2.start()
+            t0.join()
+            t1.join()
+            # t2.join()
 
         except Exception as excp:
             print(f'ITEM {name} FAILED BECAUSE OF {excp}')
@@ -138,6 +195,10 @@ class Product:
             self._img_dir = f'images\\item {self.name}.jpg'
 
     @property
+    def img_dir(self):
+        return self._img_dir
+
+    @property
     def similar_product(self):
         return self._similar_product
 
@@ -158,12 +219,12 @@ class Main:
         cnt = 0
         while True:
             try:
-                if cnt > 2:    # Breaking loop, if it took too much time
+                if cnt >= 2:    # Breaking loop, if it took too much time
                     break
                 
                 # Getting name
                 item_name = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')
-                
+
                 # Getting href attrib of product div tag
                 item = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
 
@@ -215,4 +276,22 @@ class Main:
 
 if __name__ == '__main__':
     system = Main()
-    print(system.main(search_word = 'category-mobile-phone/product-list')[0]._img_dir)
+    obj:Product = system.main(search_word = 'category-mobile-phone/product-list')[0]
+    print(obj.name)
+    print(obj.price)
+    print(obj.features)
+    print(obj.link)
+    print(obj.img_address)
+    print(obj.img_dir)
+    similar_obj:SimilarProduct = obj.similar_product
+    print(similar_obj.divar_name)
+    print(similar_obj.divar_price)
+    print(similar_obj.divar_link)
+
+    print(similar_obj.torob_name)
+    print(similar_obj.torob_price)
+    print(similar_obj.torob_link)
+
+    print(similar_obj.zoomit_name)
+    print(similar_obj.zoomit_price)
+    print(similar_obj.zoomit_link)

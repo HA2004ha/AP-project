@@ -698,11 +698,11 @@ class RegistrationForm(QWidget):
         
         #set photo product at page product
         try :
-            image=Image.open('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
+            image=Image.open('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
             new_size=(300,300)
             resize_image=image.resize(new_size)
-            resize_image.save('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
-            self.product_picture = QPixmap('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
+            resize_image.save('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
+            self.product_picture = QPixmap('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
             self.label_picture.setPixmap(self.product_picture)
             self.label_picture.setGeometry(600,100,300,300)
         except:
@@ -733,7 +733,7 @@ class RegistrationForm(QWidget):
 
         self.digikala.setGeometry(600,600,300,30)
         self.digikala.clicked.connect(lambda x :self.open_site(product.link)) #set url site
-        self.digikala.setText(fr"Digikala : {product.price}") #set price
+        self.digikala.setText(fr"Digikala : {product._current_price}") #set price
 
         self.divar.setGeometry(600,650,300,30)
         self.divar.clicked.connect(lambda x :self.open_site()) #set url site
@@ -805,7 +805,7 @@ if __name__ == '__main__':
         last_time = json.load(l)
 
     # if time.time() - last_time["time"]> 86400:
-    if time.time() - last_time["time"]> 86400:
+    if time.time() - last_time["time"]> 10:
         system1 = Main()
         system2 = Main()
         system3 = Main()

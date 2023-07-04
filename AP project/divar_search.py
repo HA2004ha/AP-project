@@ -127,6 +127,8 @@ class Main:
         for thrd in t_ls:
             thrd.join()
 
+        self.browser.close()
+
         return self.items[search_system(self.items.keys(), search_word)]
 
 

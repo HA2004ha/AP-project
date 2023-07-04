@@ -74,16 +74,22 @@ class Main:
 
         search_box = self.browser.find_element(By.CSS_SELECTOR, 'body > div.internal.mainproduct:nth-child(6) > div.c-search-box:nth-child(9) > div.search-box > div.seach-box__form > div.seach-box__field > input#productsSearch.autocomplete-input.ui-autocomplete-input:nth-child(1)')
         search_box.send_keys(search_word)
-        sleep(2)
-        item = self.browser.find_element(By.XPATH, '/html/body/div[2]/div[5]/div/div/div/div/div/div[1]/ul')
+        sleep(5)
+        item = self.browser.find_element(By.XPATH, '//*[@id="ui-id-5"]/li[1]')
         item.click()
+
+        sleep(2)
 
         item_name = self.browser.find_element(By.CSS_SELECTOR, 'body > div.internal.mainproduct:nth-child(6) > div.container.mrg15T.mrg15B:nth-child(10) > div.c-summary-product:nth-child(2) > div.summary-product > div.summary-product__detail:nth-child(2) > div.ProductTitle.mrg30B.hidden-sm.hidden-xs:nth-child(1) > h1:nth-child(1)') 
         item_price = self.browser.find_element(By.CSS_SELECTOR, 'body > div.internal.mainproduct:nth-child(6) > div.container.mrg15T.mrg15B:nth-child(10) > div.c-summary-product:nth-child(2) > div.summary-product > div.summary-product__detail:nth-child(2) > a.summary-product--price.fa-num.hidden-xs.hidden-sm:nth-child(2) > span:nth-child(1) > span')       
         item_link = self.browser.current_url
 
+        self.browser.close()
+
+        print(item_name)
+
         return Product(item_name.text, item_price.text, item_link)
 
 if __name__ == '__main__':
     system = Main()
-    print(system.main())
+    print(system.main('گوشی موبایل اپل مدل iPhone 13 CH دو سیم‌ کارت ظرفیت 128 گیگابایت و رم 4 گیگابایت - نات اکتیو'))

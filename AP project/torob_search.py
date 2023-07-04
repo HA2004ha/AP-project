@@ -76,11 +76,11 @@ class Product:
             try:
                 manipulated_price = price.replace(',', '').translate(arabic_to_latin)
                 self._current_price = int(manipulated_price)
-            except:
+            except Exception as excp1:
                 try:
-                    manipulated_price = price.replace('از ', '').replace(' تومان', '').replace(',', '').translate(arabic_to_latin)
+                    manipulated_price = price.replace('از ', '').replace(' تومان', '').replace('٫', '').translate(arabic_to_latin)
                     self._current_price = int(manipulated_price)
-                except:
+                except Exception as excp2:
                     self._current_price = price
 
     @property
@@ -98,9 +98,9 @@ class Main:
 
     def get_item_data(self, i):
         try:
-            item_name = self.browser.find_element(By.XPATH, f'/html/body/div/div/div/div[3]/div/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/h2')
-            item_price = self.browser.find_element(By.XPATH, f'/html/body/div/div/div/div[3]/div/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/div[3]')
-            item = self.browser.find_element(By.XPATH, f'/html/body/div/div/div/div[3]/div/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a')
+            item_name = self.browser.find_element(By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/h2')
+            item_price = self.browser.find_element(By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/div[3]')
+            item = self.browser.find_element(By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a')
             self.items[item_name.text] = Product(item_name.text, item_price.text, item.get_attribute('href'))
 
         except Exception as expt:
@@ -127,9 +127,11 @@ class Main:
         for thrd in t_ls:
             thrd.join()
 
+        self.browser.close()
+
         return self.items[search_system(self.items.keys(), search_word)]
 
 
 if __name__ == '__main__':
     system = Main()
-    print(system.main())
+    print(system.main().price)
