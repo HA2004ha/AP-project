@@ -681,20 +681,21 @@ class RegistrationForm(QWidget):
 #--------------------------------------------------------------------------------------------  
 
     def page_product(self,product,products):
-
         #set back button to go page products
         self.back.setGeometry(750,35,100,35)
         self.back.clicked.connect(lambda x : self.show_page(products))
         
         #set photo product at page product
-        image=Image.open('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
-        new_size=(300,300)
-        resize_image=image.resize(new_size)
-        resize_image.save(product._img_dir) #set name photo product , just example
-        self.product_picture = QPixmap(product._img_dir) #set name photo product , just example
-        self.label_picture.setPixmap(self.product_picture)
-        self.label_picture.setGeometry(600,100,300,300)
-
+        try :
+            image=Image.open('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
+            new_size=(300,300)
+            resize_image=image.resize(new_size)
+            resize_image.save('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
+            self.product_picture = QPixmap('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
+            self.label_picture.setPixmap(self.product_picture)
+            self.label_picture.setGeometry(600,100,300,300)
+        except:
+            pass
         #number detail product
         list_detail=[]
         for item in product.features:
@@ -702,13 +703,14 @@ class RegistrationForm(QWidget):
 
         self.table.setRowCount(10)
         self.table.setColumnCount(2)
-
-        for row in range(10):
-            for column in range(2):
-                item = QTableWidgetItem(list_detail[row][column])
-                item.setTextAlignment(Qt.AlignCenter) #set detail product
-                self.table.setItem(row, column, item)
-                
+        try:
+            for row in range(10):
+                for column in range(2):
+                    item = QTableWidgetItem(list_detail[row][column])
+                    item.setTextAlignment(Qt.AlignCenter) #set detail product
+                    self.table.setItem(row, column, item)
+        except:
+            pass        
         self.table.horizontalHeader().setDefaultSectionSize(150) #size a tabel
         self.table.verticalHeader().setDefaultSectionSize(50)
         self.table.setGeometry(100,100,302,502)
@@ -783,7 +785,7 @@ if __name__ == '__main__':
     with open('last_time.json', 'r') as l:
         last_time = json.load(l)
 
-    if time.time() - last_time["time"]> 1:
+    if time.time() - last_time["time"]> 86400:
         system1 = Main()
         system2 = Main()
         system3 = Main()
