@@ -150,6 +150,9 @@ class RegistrationForm(QWidget):
         self.main_layout = QVBoxLayout()
 
         #object for page product gui
+        self.dlg = QDialog(self)
+        self.dlg.setWindowTitle("Comparing")
+        self.layout1 = QVBoxLayout()
         self.label_show_message = QLabel("",self)
         self.label_show_message.setStyleSheet("font-size: 20px")
         self.timer = QTimer(self)
@@ -214,6 +217,20 @@ class RegistrationForm(QWidget):
                                         "font-size:15px;")
         self.favorit_button.setGeometry(450,750,100,32)
         self.favorit_button.clicked.connect(self.add_remove_favorites)
+        self.compare_products_btn=QPushButton("Compare Products",self)
+        self.compare_products_btn.setStyleSheet("background-color: qradialgradient(cx:0.5, cy:0.5,"
+                                        "fx:0.5,fy:0.5,radius:0.6,"
+                                        "stop:0 white, stop:1 #c0c0c0);"
+                                        "border-style: outset;"
+                                        "border-width: 3px;"
+                                        "border-radius: 10px;"
+                                        "border-color: gray;"
+                                        "padding: 6px;"
+                                        "color:black;"
+                                        "font-size:15px;")
+        self.compare_products_btn.setGeometry(25,750,150,32)
+        self.compare_products_btn.clicked.connect(self.compare_products_fun)
+        self.compare_lst=[]
 
         self.hide_page_product() #hide element page product
         self.hide_page() #hide element page products
@@ -512,7 +529,7 @@ class RegistrationForm(QWidget):
     def home_page(self):
         #welcom...
         self.label_show_message.show()
-        self.label_show_message.setGeometry(400,25,200,32)
+        self.label_show_message.setGeometry(400,25,250,32)
         self.label_show_message.setText("Welcome To Mini Torob")
         self.timer.timeout.connect(lambda :self.label_show_message.setText(""))
         self.timer.start(4000)
@@ -747,8 +764,72 @@ class RegistrationForm(QWidget):
         #set Favorit product 
         self.favorit_product=product
 
+        #choose product for compare
+        self.choose_product=product
+
         self.show_page_product()
+
+    def compare_products_fun(self):
+        self.compare_lst.append(self.choose_product)
         
+        if len(self.compare_lst)==1:
+            self.label_show_message.setText("Product was selection")
+            self.timer.timeout.connect(lambda :self.label_show_message.setText(""))
+            self.timer.start(4000)
+        elif self.compare_lst[0]==self.compare_lst[1]:
+            self.compare_lst.clear()
+            self.label_show_message.setText("Product Selection removed")
+            self.timer.timeout.connect(lambda :self.label_show_message.setText(""))
+            self.timer.start(4000)      
+        else:
+            for product in self.compare_lst:
+                label=QLabel(product.name)
+                list_detail=[]
+                for item in product.features:
+                    list_detail.append([item,product.features[item]])
+                table=QTableWidget()
+                table.setRowCount(2)
+                table.setColumnCount(len(list_detail))
+                try:
+                    for row in range(2):
+                        for column in range(len(list_detail)):
+                            item = QTableWidgetItem(list_detail[column][row])
+                            item.setTextAlignment(Qt.AlignCenter) #set detail product
+                            table.setItem(row, column, item)
+                except:
+                    pass        
+                table.horizontalHeader().setDefaultSectionSize(150) #size a tabel
+                table.verticalHeader().setDefaultSectionSize(50)
+                table.setGeometry(100,100,302,502)
+                table.verticalHeader().setVisible(False) #remove index
+                table.horizontalHeader().setVisible(False)
+
+                digikala=QPushButton()
+                digikala.clicked.connect(lambda x :self.open_site(product.link)) #set url site
+                digikala.setText(fr"Digikala : {product.price}") #set price
+
+                divar=QPushButton()
+                divar.clicked.connect(lambda x :self.open_site()) #set url site
+                divar.setText(fr"Divar : ")  #set price
+
+                torob=QPushButton()
+                torob.clicked.connect(lambda x :self.open_site()) #set url site
+                torob.setText(fr"Torob : ")  #set price
+                self.layout1.addWidget(label)
+                self.layout1.addWidget(table)
+                self.layout1.addWidget(digikala)
+                self.layout1.addWidget(divar)
+                self.layout1.addWidget(torob)
+            self.dlg.setLayout(self.layout1)
+            self.dlg.exec()
+
+            while self.layout1.count():
+                item = self.layout1.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+            self.compare_lst.clear()
+
     #add or remove produt  favorit page
     def add_remove_favorites(self):
 
@@ -781,6 +862,7 @@ class RegistrationForm(QWidget):
         self.label_price.hide()
         self.favorit_button.hide()
         self.label_show_message.hide()
+        self.compare_products_btn.hide()
             
     def show_page_product(self):
 
@@ -797,6 +879,7 @@ class RegistrationForm(QWidget):
         self.label_price.show()
         self.favorit_button.show()
         self.label_show_message.show()
+        self.compare_products_btn.show()
 
 #--------------------------------------------------------------------------------------------  
 
