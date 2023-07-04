@@ -661,7 +661,7 @@ class RegistrationForm(QWidget):
         self.back.clicked.connect(lambda x : self.show_page(products))
         
         #set photo product at page product
-        image=Image.open(product._img_dir) #set name photo product , just example
+        image=Image.open('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
         new_size=(300,300)
         resize_image=image.resize(new_size)
         resize_image.save(product._img_dir) #set name photo product , just example
@@ -769,12 +769,12 @@ if __name__ == '__main__':
         tablet_lst=system4.main(search_word = "category-tablet")
         laptop_lst=system5.main(search_word = "notebook-netbook-ultrabook")
         
-        '''with shelve.open('data_products') as db:
+        with shelve.open('data_products') as db:
             db['mobile_lst']=mobile_lst
             db['headset_lst']=headset_lst
             db['tv_lst']=tv_lst
             db['tablet_lst']=tablet_lst
-            db['laptop_lst']=laptop_lst'''
+            db['laptop_lst']=laptop_lst
 
         last_time["time"]=time.time()
         with open('last_time.json', 'w') as l:

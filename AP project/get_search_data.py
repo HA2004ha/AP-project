@@ -88,7 +88,7 @@ class Product:
     def img_address_setter(self):
         if self._features['img_adrs'] != 'image unavailable':
             self._img_address = self._features['img_adrs']    
-            self._img_dir = f'images\\{self.name}'
+            self._img_dir = f'images\\item {self.name}.jpg'
 
 class Main:
     def __init__(self):
@@ -164,6 +164,8 @@ class Main:
 
         for thrd in t_ls:
             thrd.join()
+
+        self.browser.close()
 
         return self.items
 

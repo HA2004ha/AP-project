@@ -67,17 +67,15 @@ def get_features(name, url = 'https://www.digikala.com/product/dkp-8366616/%DA%A
             try:
                 img_file = open(f'images\\{browser.title}.jpg', "wb")
             except:
-                try:
-                    img_file = open(f'images\\item {name}.jpg', "wb")
-                except:
-                    img_file = open(f'images\\item {random.randint(1000000, 999999999)}.jpg', "wb")
+                img_file = open(f'images\\item {name}.jpg', "wb")
             img_file.write(img_bytes)
             img_file.close()
         except Exception as excp:
             pass
-
     except:
         prod_features['img_adrs'] = 'image unavailable'
+
+    browser.close()
 
     return prod_features
 
