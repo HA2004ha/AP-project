@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import *
 import webbrowser
 from get_search_data import *
 import shelve
-import pickle
+from threading import Thread
 
 def encode_dict(dictionary):
     encoded_dict = {}
@@ -687,14 +687,15 @@ class RegistrationForm(QWidget):
         
         #set photo product at page product
         try :
-            image=Image.open('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
+            image=Image.open('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
             new_size=(300,300)
             resize_image=image.resize(new_size)
-            resize_image.save('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
-            self.product_picture = QPixmap('C:\\Users\\H.A\\Desktop\\AP-project-1\\AP project\\' + product._img_dir) #set name photo product , just example
+            resize_image.save('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
+            self.product_picture = QPixmap('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
             self.label_picture.setPixmap(self.product_picture)
             self.label_picture.setGeometry(600,100,300,300)
         except:
+            print('reedam')
             pass
         #number detail product
         list_detail=[]
@@ -785,17 +786,46 @@ if __name__ == '__main__':
     with open('last_time.json', 'r') as l:
         last_time = json.load(l)
 
-    if time.time() - last_time["time"]> 86400:
+    # if time.time() - last_time["time"]> 86400:
+    if time.time() - last_time["time"]> 10:
         system1 = Main()
         system2 = Main()
         system3 = Main()
         system4 = Main()
         system5 = Main()
-        mobile_lst=system1.main(search_word = "category-mobile-phone/product-list")
-        headset_lst=system2.main(search_word = "category-headphone")
-        tv_lst=system3.main(search_word = "category-tv2")
-        tablet_lst=system4.main(search_word = "category-tablet")
-        laptop_lst=system5.main(search_word = "notebook-netbook-ultrabook")
+        shared_ls = {}
+        def f0(shared_ls):
+            shared_ls[0]=system1.main(search_word = "category-mobile-phone/product-list")
+        def f1(shared_ls):
+            shared_ls[1]=system2.main(search_word = "category-headphone")
+        def f2(shared_ls):
+            shared_ls[2]=system3.main(search_word = "category-tv2")
+        def f3(shared_ls):
+            shared_ls[3]=system4.main(search_word = "category-tablet")
+        def f4(shared_ls):
+            shared_ls[4]=system5.main(search_word = "notebook-netbook-ultrabook")
+        
+        t0 = Thread(target=lambda: f0(shared_ls))
+        t1 = Thread(target=lambda: f1(shared_ls))
+        t2 = Thread(target=lambda: f2(shared_ls))
+        t3 = Thread(target=lambda: f3(shared_ls))
+        t4 = Thread(target=lambda: f4(shared_ls))
+        t0.start()
+        t1.start()
+        t2.start()
+        t3.start()
+        t4.start()
+        t0.join()
+        t1.join()
+        t2.join()
+        t3.join()
+        t4.join()
+
+        mobile_lst = shared_ls[0]
+        headset_lst = shared_ls[1]
+        tv_lst = shared_ls[2]
+        tablet_lst = shared_ls[3]
+        laptop_lst = shared_ls[4]
         
         with shelve.open('data_products') as db:
             db['mobile_lst']=mobile_lst
