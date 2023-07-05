@@ -292,6 +292,6 @@ if __name__ == '__main__':
     print(similar_obj.torob_price)
     print(similar_obj.torob_link)
 
-    print(similar_obj.zoomit_name)
-    print(similar_obj.zoomit_price)
-    print(similar_obj.zoomit_link)
+    # print(similar_obj.zoomit_name)
+    # print(similar_obj.zoomit_price)
+    # print(similar_obj.zoomit_link)
