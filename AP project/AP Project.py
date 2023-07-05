@@ -891,7 +891,7 @@ if __name__ == '__main__':
         last_time = json.load(l)
 
     # if time.time() - last_time["time"]> 86400:
-    if time.time() - last_time["time"]> 1:
+    if time.time() - last_time["time"]> 11111:
         system1 = Main()
         system2 = Main()
         system3 = Main()
