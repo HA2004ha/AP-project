@@ -726,7 +726,7 @@ class RegistrationForm(QWidget):
             self.label_picture.setPixmap(self.product_picture)
             self.label_picture.setGeometry(600,100,300,300)
         except:
-            pass
+            self.label_picture.clear()
         #number detail product
         list_detail=[]
         for item in product.features:
@@ -741,7 +741,11 @@ class RegistrationForm(QWidget):
                     item.setTextAlignment(Qt.AlignCenter) #set detail product
                     self.table.setItem(row, column, item)
         except:
-            pass        
+            for row in range(10):
+                for column in range(2):
+                    item = QTableWidgetItem("None")
+                    item.setTextAlignment(Qt.AlignCenter) #set detail product
+                    self.table.setItem(row, column, item)        
         self.table.horizontalHeader().setDefaultSectionSize(150) #size a tabel
         self.table.verticalHeader().setDefaultSectionSize(50)
         self.table.setGeometry(100,100,302,502)
@@ -906,8 +910,7 @@ if __name__ == '__main__':
     with open('datas\\last_time.json', 'r') as l:
         last_time = json.load(l)
 
-    # if time.time() - last_time["time"]> 86400:
-    if time.time() - last_time["time"]> 11111:
+    if time.time() - last_time["time"]> 1:
         system1 = Main()
         system2 = Main()
         system3 = Main()
