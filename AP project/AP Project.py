@@ -231,6 +231,9 @@ class RegistrationForm(QWidget):
         self.compare_products_btn.setGeometry(25,750,150,32)
         self.compare_products_btn.clicked.connect(self.compare_products_fun)
         self.compare_lst=[]
+        self.digikala.clicked.connect(lambda x :self.open_site_digikala()) #set url site
+        self.divar.clicked.connect(lambda x :self.open_site_divar()) #set url site
+        self.torob.clicked.connect(lambda x :self.open_site_torob()) #set url site
 
         self.hide_page_product() #hide element page product
         self.hide_page() #hide element page products
@@ -749,17 +752,19 @@ class RegistrationForm(QWidget):
         self.label_price.setGeometry(600,550,300,25)
         
         self.digikala.setGeometry(600,600,300,30)
-        self.digikala.clicked.connect(lambda x :self.open_site(product.link)) #set url site
+        self.url_digikala=product.link
         self.digikala.setText(fr"Digikala : {product._current_price}") #set price
-
+        self.url_divar=product.similar_product.divar_link
         self.divar.setGeometry(600,650,300,30)
-        self.divar.clicked.connect(lambda x :self.open_site(product.similar_product.divar_link)) #set url site
+        self.url_torob=product.similar_product.torob_link
         self.divar.setText(fr"Divar : {product.similar_product.divar_price}")  #set price
 
         self.torob.setGeometry(600,700,300,30)
-        self.torob.clicked.connect(lambda x :self.open_site(product.similar_product.torob_link)) #set url site
-        self.torob.setText(fr"Torob : {product.similar_product.torob_price}")  #set price
         
+        self.torob.setText(fr"Torob : {product.similar_product.torob_price}")  #set price
+        product.link
+
+
         #set Favorit product 
         self.favorit_product=product
 
@@ -847,12 +852,23 @@ class RegistrationForm(QWidget):
             db[self.username] = self.favorites_list     
 
     #open chrome
-    def open_site(self,url="https://www.google.com"): #for example
+    def open_site_digikala(self,url="https://www.google.com"): #for example
         try:
-            webbrowser.open(url)
+            webbrowser.open(self.url_digikala)
         except:
             pass    
-
+    #open chrome
+    def open_site_divar(self,url="https://www.google.com"): #for example
+        try:
+            webbrowser.open(self.url_divar)
+        except:
+            pass
+            #open chrome
+    def open_site_torob(self,url="https://www.google.com"): #for example
+        try:
+            webbrowser.open(self.url_torob)
+        except:
+            pass
     def hide_page_product(self):
 
         self.back.hide()
