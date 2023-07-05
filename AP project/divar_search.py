@@ -107,7 +107,16 @@ class Main:
             print(f'Failed on item {i}, because of {expt}')
 
     def main(self, search_word = 'آیفون 13 پرو'):
-        manipulated_search_word = search_word.replace(' ', '%20')
+        try:
+            manipulated_search_word = (' '.join(search_word.split()[:4])).replace(' ', '%20')
+        except:
+            try:
+                manipulated_search_word = (' '.join(search_word.split()[:3])).replace(' ', '%20')
+            except:
+                try:
+                    manipulated_search_word = (' '.join(search_word.split()[:2])).replace(' ', '%20')
+                except:
+                    manipulated_search_word = search_word.replace(' ', '%20')
 
         url = 'https://divar.ir/s/tehran/mobile-phones?goods-business-type=all&q=' + manipulated_search_word
 
@@ -134,4 +143,7 @@ class Main:
 
 if __name__ == '__main__':
     system = Main()
-    print(system.main())
+    obj:Product = (system.main())
+    print(obj.name)
+    print(obj.price)
+    print(obj.link)

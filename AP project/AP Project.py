@@ -910,7 +910,7 @@ if __name__ == '__main__':
     with open('datas\\last_time.json', 'r') as l:
         last_time = json.load(l)
 
-    if time.time() - last_time["time"]> 1:
+    if time.time() - last_time["time"]> 86400:
         system1 = Main()
         system2 = Main()
         system3 = Main()
