@@ -67,7 +67,7 @@ class RegistrationForm(QWidget):
         self.favorites_list=[]
 
         #set backgroung
-        self.pixmap = QPixmap("home.jpg")
+        self.pixmap = QPixmap("images\\home.jpg")
         self.label=QLabel(self)
         self.label.setPixmap(self.pixmap)
         self.label.resize(1000,800)
@@ -324,14 +324,14 @@ class RegistrationForm(QWidget):
         
         #set or error sign in user
         try:
-            with open('users.json', 'r') as f:
+            with open('datas\\users.json', 'r') as f:
                 data = json.load(f)
                 data=decode_dict(data)
                 if data[username] == password:
 
                     self.username=username #save username for add list favorite json file
 
-                    with shelve.open('my_data_favorites') as db:
+                    with shelve.open('datas\\my_data_favorites') as db:
                         self.favorites_list = db[username]
 
                     self.show_home()
@@ -450,7 +450,7 @@ class RegistrationForm(QWidget):
         self.defult()
 
         #set or error sin up user
-        with open('users.json', 'r') as f: #creat or open json file for save data
+        with open('datas\\users.json', 'r') as f: #creat or open json file for save data
             data = json.load(f)
             data = decode_dict(data)
         if username in data or len(username)==0:
@@ -479,10 +479,10 @@ class RegistrationForm(QWidget):
                 if password==repeat_password  : 
 
                     data[username] = password
-                    with open('users.json', 'w') as f:
+                    with open('datas\\users.json', 'w') as f:
                         json.dump(encode_dict(data), f)
 
-                    with shelve.open('my_data_favorites') as db:
+                    with shelve.open('datas\\my_data_favorites') as db:
                         db[username] = []
 
                     self.show_sign_in()
@@ -715,11 +715,11 @@ class RegistrationForm(QWidget):
         
         #set photo product at page product
         try :
-            image=Image.open('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
+            image=Image.open(  product._img_dir) #set name photo product , just example
             new_size=(300,300)
             resize_image=image.resize(new_size)
-            resize_image.save('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
-            self.product_picture = QPixmap('C:\\Users\\Dell\\Desktop\\ap-proj\\AP-project\\AP project\\' + product._img_dir) #set name photo product , just example
+            resize_image.save( product._img_dir) #set name photo product , just example
+            self.product_picture = QPixmap( product._img_dir) #set name photo product , just example
             self.label_picture.setPixmap(self.product_picture)
             self.label_picture.setGeometry(600,100,300,300)
         except:
@@ -747,18 +747,18 @@ class RegistrationForm(QWidget):
 
         #set button price product
         self.label_price.setGeometry(600,550,300,25)
-
+        
         self.digikala.setGeometry(600,600,300,30)
         self.digikala.clicked.connect(lambda x :self.open_site(product.link)) #set url site
         self.digikala.setText(fr"Digikala : {product._current_price}") #set price
 
         self.divar.setGeometry(600,650,300,30)
-        self.divar.clicked.connect(lambda x :self.open_site()) #set url site
-        self.divar.setText(fr"Divar : ")  #set price
+        self.divar.clicked.connect(lambda x :self.open_site(product.similar_product.divar_link)) #set url site
+        self.divar.setText(fr"Divar : {product.similar_product.divar_price}")  #set price
 
         self.torob.setGeometry(600,700,300,30)
-        self.torob.clicked.connect(lambda x :self.open_site()) #set url site
-        self.torob.setText(fr"Torob : ")  #set price
+        self.torob.clicked.connect(lambda x :self.open_site(product.similar_product.torob_link)) #set url site
+        self.torob.setText(fr"Torob : {product.similar_product.torob_price}")  #set price
         
         #set Favorit product 
         self.favorit_product=product
@@ -843,12 +843,15 @@ class RegistrationForm(QWidget):
             self.timer.timeout.connect(lambda :self.label_show_message.setText(""))
             self.timer.start(4000)
              
-        with shelve.open('my_data_favorites') as db:
+        with shelve.open('datas\\my_data_favorites') as db:
             db[self.username] = self.favorites_list     
 
     #open chrome
     def open_site(self,url="https://www.google.com"): #for example
-        webbrowser.open(url)
+        try:
+            webbrowser.open(url)
+        except:
+            pass    
 
     def hide_page_product(self):
 
@@ -884,11 +887,11 @@ class RegistrationForm(QWidget):
 
 if __name__ == '__main__':
 
-    with open('last_time.json', 'r') as l:
+    with open('datas\\last_time.json', 'r') as l:
         last_time = json.load(l)
 
     # if time.time() - last_time["time"]> 86400:
-    if time.time() - last_time["time"]> 10:
+    if time.time() - last_time["time"]> 1:
         system1 = Main()
         system2 = Main()
         system3 = Main()
@@ -928,7 +931,7 @@ if __name__ == '__main__':
         tablet_lst = shared_ls[3]
         laptop_lst = shared_ls[4]
         
-        with shelve.open('data_products') as db:
+        with shelve.open('datas\\data_products') as db:
             db['mobile_lst']=mobile_lst
             db['headset_lst']=headset_lst
             db['tv_lst']=tv_lst
@@ -936,11 +939,11 @@ if __name__ == '__main__':
             db['laptop_lst']=laptop_lst
 
         last_time["time"]=time.time()
-        with open('last_time.json', 'w') as l:
+        with open('datas\\last_time.json', 'w') as l:
             json.dump(last_time, l)
     else: 
         
-        with shelve.open('data_products') as db:
+        with shelve.open('datas\\data_products') as db:
                         
             mobile_lst=db['mobile_lst']
             headset_lst=db['headset_lst']
