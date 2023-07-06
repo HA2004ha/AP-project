@@ -2,7 +2,9 @@ from threading import Thread
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from time import sleep
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+#from time import sleep
 from googletrans import Translator
 import Levenshtein
 
@@ -98,9 +100,9 @@ class Main:
 
     def get_item_data(self, i):
         try:
-            item_name = self.browser.find_element(By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/h2')
-            item_price = self.browser.find_element(By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/div[3]')
-            item = self.browser.find_element(By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a')
+            item_name =WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/h2')))
+            item_price =WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a/div/div[3]')))
+            item =WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, f'//*[@id="layout-wrapp"]/div[2]/div/div/div[2]/div[2]/div/div/div[{i}]/a')))
             self.items[item_name.text] = Product(item_name.text, item_price.text, item.get_attribute('href'))
 
         except Exception as expt:
@@ -112,7 +114,7 @@ class Main:
         url = 'https://torob.com/search/?category=&query=' + manipulated_search_word
 
         self.browser.get(url)
-        sleep(5)
+        #sleep(5)
 
         t_ls = []
         i = 1

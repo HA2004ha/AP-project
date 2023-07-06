@@ -3,8 +3,10 @@ import requests
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from time import sleep
+#from time import sleep
 from collections import OrderedDict
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from dgkala_data_getter import get_features
 from divar_search import Main as DIVARMAIN
 from torob_search import Main as TOROBMAIN
@@ -228,10 +230,11 @@ class Main:
                     break
                 
                 # Getting name
-                item_name = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')
+                item_name =WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a/div/article/div[2]/div[2]/div[2]/h3')))
 
                 # Getting href attrib of product div tag
-                item = self.browser.find_element(By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')
+                item =WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.XPATH, f'//*[@id="ProductListPagesWrapper"]/section[1]/div[2]/div[{i}]/a')))
+
 
                 # Appending item to the list
                 self.items.append(Product(item_name.text, item.get_attribute('href')))
@@ -240,8 +243,8 @@ class Main:
 
             except Exception as excp:
                 for j in range(5):
-                    self.browser.find_element(By.TAG_NAME, "body").send_keys(Keys.DOWN)
-                sleep(0.2)
+                    WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.TAG_NAME, "body"))).send_keys(Keys.DOWN)
+                #sleep(0.2)
                 cnt += 1
 
     def main(self, search_word = 'آیفون 13 پرو'):
@@ -249,9 +252,9 @@ class Main:
         url = 'https://www.digikala.com/search/' + search_word
 
         self.browser.get(url)
-        sleep(5)
+        #sleep(5)
 
-        number_of_items = 1
+        number_of_items = 10
         i = 1
         t_ls = []
         while True:
