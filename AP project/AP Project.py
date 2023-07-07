@@ -813,16 +813,16 @@ class RegistrationForm(QWidget):
                 table.horizontalHeader().setVisible(False)
 
                 digikala=QPushButton()
-                digikala.clicked.connect(lambda x :self.open_site(product.link)) #set url site
+
                 digikala.setText(fr"Digikala : {product.price}") #set price
 
                 divar=QPushButton()
-                divar.clicked.connect(lambda x :self.open_site()) #set url site
-                divar.setText(fr"Divar : ")  #set price
+
+                divar.setText(fr"Divar : {product.similar_product.divar_price}")  #set price
 
                 torob=QPushButton()
-                torob.clicked.connect(lambda x :self.open_site()) #set url site
-                torob.setText(fr"Torob : ")  #set price
+
+                torob.setText(fr"Torob : {product.similar_product.torob_price}")  #set price
                 self.layout1.addWidget(label)
                 self.layout1.addWidget(table)
                 self.layout1.addWidget(digikala)
